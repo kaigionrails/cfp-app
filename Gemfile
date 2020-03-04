@@ -43,6 +43,9 @@ gem 'react-rails'
 
 gem 'sidekiq'
 
+gem 'diffy'
+gem 'paper_trail'
+
 group :production do
   gem 'rails_12factor'
   gem 'rack-timeout', '~> 0.5'
