@@ -46,6 +46,7 @@ gem 'redcarpet', '~> 3.5'
 gem 'simple_form'
 gem 'tinymce-rails'
 gem 'image_processing', '~> 1.2'
+gem 'rails-i18n', '~> 6.0'
 gem 'react-rails'
 gem 'webpacker'
 

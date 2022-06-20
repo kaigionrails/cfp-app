@@ -1,0 +1,43 @@
+ja:
+  hello: こんにちは
+  proposal:
+    new:
+      title: "プロポーザルを提出する"
+      closes: 締め切り
+      form: フォーム
+      preview: プレビュー
+      instruction: 承認されやすくするために、<strong>%{guideline}</strong>をお読みください。あなたが誰であるかを特定できるような情報はなるべく記載しないよう心掛けてください。
+      guidelines: ガイドライン
+      gfm_html: <a href="https://help.github.com/articles/github-flavored-markdown"><strong>GitHub Flavored Markdown</strong></a>を使用することができます。
+    form:
+      none_selected: "選択されていません"
+      title_hint: ""
+      track: "トラック"
+      for_review_committee: "レビュー委員会向け"
+      for_review_committee_description_html: "以下の記入事項はレビュー委員会に<strong>のみ</strong>公開されます。"
+      speaker_information: "発表者情報"
+      speaker_information_description_html: "この情報は、審査の過程では<strong>表示されません</strong>。このプロポーザルが採択された場合、名前と詳細は公開されます。"
+      submit: 送信
+      cancel: キャンセル
+  simple_form:
+    labels:
+      proposal:
+        title: "タイトル"
+        track: "トラック"
+        session_format: "形式"
+        abstract: "概要"
+        details: "詳細"
+        pitch: "ピッチ"
+      speakers:
+        name: "名前"
+        bio: "詳細"
+    hints:
+      proposal:
+        title: "公開されるタイトルです。目を引く興味深いものが好ましいです。60文字以内。"
+        track: "特定のトラックを提案することができます(任意)"
+        session_format: "あなたのプロポーザルの形式です。"
+        abstract: "あなたのプロポーザルについての、公開される簡潔で魅力的な説明文です。600文字以内です。"
+        details: "あなたのプロポーザルについての概要、成果、対象者など、関連する詳細があれば含めてください。"
+        pitch: "このプロポーザルを採択すべき理由と、あなたがそのテーマで講演するにふさわしい理由を説明してください。"
+      speakers:
+        bio: "あなたについて、500文字以内の短い、発表内容に関連する詳細を記入してください。"

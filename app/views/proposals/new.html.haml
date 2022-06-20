@@ -14,34 +14,28 @@
           = event.status
         - if event.open?
           %span.event-meta
-            CFP closes:
-            %strong= event.closes_at(:month_day_year)
+            = t("proposal.new.closes")
+            %strong= l(event.closes_at, format: :short)
 
 .page-header.page-header-slim
   .row
     .col-md-12
-      %h1 Submit a Proposal
+      %h1= t "proposal.new.title"
 
 .row
   .col-md-12
     .tabbable
       %ul.nav.nav-tabs
         %li.active
-          %a{"data-toggle" => "tab", :href => "#create-proposal"} Proposal Form
+          %a{"data-toggle" => "tab", :href => "#create-proposal"}= t("proposal.new.form")
         %li
-          %a{"data-toggle" => "tab", :href => "#preview"} Preview
+          %a{"data-toggle" => "tab", :href => "#preview"}= t("proposal.new.preview")
       .tab-content
         #create-proposal.tab-pane.active
           .row
             .col-md-8
-              %p
-                Read the <strong>#{link_to 'guidelines', event_path(event.slug)}</strong> to maximize
-                your chance of approval. Refrain from including any information that
-                would allow a reviewer to identify you.
-              %p
-                All fields support
-                %a{href: 'https://help.github.com/articles/github-flavored-markdown'}
-                  %strong GitHub Flavored Markdown.
+              %p= raw t("proposal.new.instruction", guideline: link_to(t("proposal.new.guidelines"), event_path(event.slug)))
+              %p= t("proposal.new.gfm_html")
 
               = simple_form_for proposal, url: event_proposals_path(event) do |f|
                 = render partial: 'form', locals: {f: f}

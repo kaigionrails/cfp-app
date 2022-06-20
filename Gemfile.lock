@@ -379,6 +379,9 @@ GEM
       nokogiri (>= 1.6)
     rails-html-sanitizer (1.4.2)
       loofah (~> 2.3)
+    rails-i18n (6.0.0)
+      i18n (>= 0.7, < 2)
+      railties (>= 6.0.0, < 7)
     railties (6.1.4.7)
       actionpack (= 6.1.4.7)
       activesupport (= 6.1.4.7)
@@ -559,6 +562,7 @@ DEPENDENCIES
   rails (~> 6.1.4)
   rails-assets-momentjs!
   rails-controller-testing
+  rails-i18n (~> 6.0)
   react-rails
   redcarpet (~> 3.5)
   rspec
