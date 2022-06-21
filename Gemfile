@@ -50,7 +50,7 @@ gem 'rails-i18n', '~> 6.0'
 gem 'react-rails'
 gem 'webpacker'
 
-gem 'sidekiq'
+gem 'sidekiq', '6.4.2' # To avoid warnings from redis-rb.
 
 gem 'paper_trail'
 
