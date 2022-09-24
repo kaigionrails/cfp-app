@@ -52,7 +52,7 @@ class SpeakerDecorator < ApplicationDecorator
   private def twitter_uid_to_uname(uid)
     twitter_uri = "https://twitter.com/intent/user?user_id=#{uid}"
     html = Net::HTTP.get URI.parse(twitter_uri)
-    html.scan(/<span class="nickname">@(.*)<\/span>/).first.first
+    html.scan(/<span class="nickname">@(.*)<\/span>/)&.first&.first || "kaigionrails"
   end
 
   def bio
