@@ -60,7 +60,7 @@ gem 'react-rails'
 gem 'webpacker'
 
 gem 'sidekiq'
-gem 'redis'
+gem 'redis', "~> 4.0"
 
 gem 'paper_trail'
 
