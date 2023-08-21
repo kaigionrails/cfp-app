@@ -60,6 +60,7 @@ gem 'react-rails'
 gem 'webpacker'
 
 gem 'sidekiq'
+gem 'redis'
 
 gem 'paper_trail'
 
