@@ -27,9 +27,12 @@ class SpeakerDecorator < ApplicationDecorator
   end
 
   def link_to_github
-    if user.provider == 'github'
+    case
+    when user.provider == "github"
       uname = github_uid_to_uname user.uid
       h.link_to "@#{uname}", "https://github.com/#{uname}", target: '_blank'
+    when user.github_account.present?
+      h.link_to "@#{user.github_account}", "https://github.com/#{user.github_account}", target: '_blank'
     else
       'none'
     end
@@ -41,9 +44,12 @@ class SpeakerDecorator < ApplicationDecorator
   end
 
   def link_to_twitter
-    if user.provider == 'twitter'
+    case
+    when user.provider == 'twitter'
       uname = twitter_uid_to_uname user.uid
       h.link_to "@#{uname}", "https://twitter.com/#{uname}", target: '_blank'
+    when user.twitter_account.present?
+      h.link_to "@#{user.twitter_account}", "https://twitter.com/#{user.twitter_account}", target: '_blank'
     else
       'none'
     end
