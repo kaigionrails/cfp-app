@@ -30,6 +30,10 @@ class Speaker < ApplicationRecord
   def gravatar_hash
     User.gravatar_hash(email)
   end
+
+  def github_account
+    user.github_account
+  end
 end
 
 # == Schema Information

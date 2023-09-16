@@ -1,3 +1,3 @@
 class SpeakerSerializer < ActiveModel::Serializer
-  attributes :name, :bio
+  attributes :name, :bio, :github_account
 end
