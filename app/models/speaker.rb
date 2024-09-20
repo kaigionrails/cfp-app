@@ -32,7 +32,7 @@ class Speaker < ApplicationRecord
   end
 
   def github_account
-    user.github_account
+    user&.github_account
   end
 end
 

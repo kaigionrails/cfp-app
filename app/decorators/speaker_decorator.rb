@@ -28,10 +28,10 @@ class SpeakerDecorator < ApplicationDecorator
 
   def link_to_github
     case
-    when user.provider == "github"
+    when user&.provider == "github"
       uname = github_uid_to_uname user.uid
       h.link_to "@#{uname}", "https://github.com/#{uname}", target: '_blank'
-    when user.github_account.present?
+    when user&.github_account.present?
       h.link_to "@#{user.github_account}", "https://github.com/#{user.github_account}", target: '_blank'
     else
       'none'

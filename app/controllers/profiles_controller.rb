@@ -15,6 +15,10 @@ class ProfilesController < ApplicationController
         flash[:info] = I18n.t("devise.registrations.updated")
       end
 
+      current_user.speakers.where(event: current_event).update_all(
+        bio: user_params[:bio], speaker_email: user_params[:email], speaker_name: user_params[:name]
+      )
+
       redirect_to (session.delete(:target) || root_url)
     else
       flash.now[:danger] = "Unable to save profile. Please correct the following: #{current_user.errors.full_messages.join(', ')}."
