@@ -39,7 +39,6 @@ class Proposal < ApplicationRecord
 
   before_create :set_uuid, :set_updated_by_speaker_at
   before_update :save_attr_history
-  after_update :update_program_session
   after_save :save_tags, :save_review_tags
 
   scope :accepted, -> { where(state: ACCEPTED) }
@@ -239,6 +238,7 @@ class Proposal < ApplicationRecord
     old_title = title
     speaker_updates = attributes.merge({ updated_by_speaker_at: Time.current })
     if update(speaker_updates)
+      sync_program_session
       field_names = last_change.join(', ')
       reviewers.each do |reviewer|
         Notification.create_for(reviewer, proposal: self,
@@ -283,7 +283,7 @@ class Proposal < ApplicationRecord
   # the associated program_session becomes outdated. Consequently, the program.json also becomes outdated.
   # Strictly, organizers should prohibit speakers from editing their submitted proposals directly.
   # However, for practical reasons, we allow modifications by speakers.
-  def update_program_session
+  def sync_program_session
     if program_session.present?
       program_session.update!(title: title, abstract: abstract)
     end

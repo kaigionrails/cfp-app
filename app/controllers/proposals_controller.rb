@@ -123,6 +123,7 @@ class ProposalsController < ApplicationController
   def update
     if params[:confirm]
       @proposal.update(confirmed_at: DateTime.current)
+      @proposal.sync_program_session
       redirect_to event_event_proposals_url(slug: @event.slug, uuid: @proposal), flash: { success: "Thank you for confirming your participation" }
     elsif @proposal.speaker_update_and_notify(proposal_params)
       redirect_to event_proposal_url(event_slug: @event.slug, uuid: @proposal)
