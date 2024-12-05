@@ -6,12 +6,12 @@ workflows:
     jobs:
       - build_and_test
 orbs:
-  browser-tools: circleci/browser-tools@1.1
+  browser-tools: circleci/browser-tools@1.4
 jobs:
   build_and_test:
     working_directory: ~/cfp_app
     docker:
-      - image: cimg/ruby:3.1.2-browsers
+      - image: cimg/ruby:3.1.6-browsers
         environment:
           PGHOST: localhost
           PGUSER: cfp_app

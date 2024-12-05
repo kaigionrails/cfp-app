@@ -30,6 +30,6 @@ module CFPApp
     config.i18n.available_locales = [:en, :ja]
     config.i18n.default_locale = :ja
     config.active_record.yaml_column_permitted_classes =
-      [Symbol, Hash, Array, ActiveSupport::HashWithIndifferentAccess]
+      [Symbol, Hash, Array, ActiveSupport::HashWithIndifferentAccess, ActionController::Parameters]
   end
 end

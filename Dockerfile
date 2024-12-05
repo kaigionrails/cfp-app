@@ -3,7 +3,7 @@ WORKDIR /app
 
 RUN apt-get update \
     && apt-get install -y curl git libpq-dev build-essential \
-    && curl -sL https://deb.nodesource.com/setup_15.x | bash - \
+    && curl -sL https://deb.nodesource.com/setup_18.x | bash - \
     && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
 

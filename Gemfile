@@ -45,7 +45,7 @@ gem 'bootsnap', '~> 1.13', require: false
 gem 'bootstrap-multiselect-rails', '~> 0.9.9'
 gem 'chartkick'
 gem 'coderay', '~> 1.0'
-gem 'country_select', '~> 8.0'
+gem 'country_select', '~> 10.0'
 gem 'draper', '~> 4.0'
 gem 'faker'
 gem 'fastly'
@@ -55,14 +55,15 @@ gem 'pundit'
 gem 'redcarpet', '~> 3.5'
 gem 'simple_form'
 gem 'tinymce-rails'
-gem 'image_processing', '~> 1.2'
 gem 'rails-i18n', '~> 6.0'
+gem 'image_processing', '~> 1.13'
 gem 'react-rails'
-gem 'webpacker'
+gem 'shakapacker', '~> 6.6'
 
 gem 'sidekiq'
 gem 'redis', "~> 4.0"
 
+gem 'diffy'
 gem 'paper_trail'
 
 gem 'sendgrid-ruby'
@@ -88,7 +89,7 @@ end
 group :development, :test do
   gem 'amazing_print', require: false
   gem 'capybara', '~> 3.37'
-  gem 'database_cleaner', '~> 2.0'
+  gem 'database_cleaner', '~> 2.1'
   gem 'dotenv-rails'
   gem 'factory_bot_rails'
   gem 'growl'
