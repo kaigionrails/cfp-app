@@ -238,6 +238,7 @@ class Proposal < ApplicationRecord
     old_title = title
     speaker_updates = attributes.merge({ updated_by_speaker_at: Time.current })
     if update(speaker_updates)
+      sync_program_session
       field_names = last_change.join(', ')
       reviewers.each do |reviewer|
         Notification.create_for(reviewer, proposal: self,
@@ -276,6 +277,16 @@ class Proposal < ApplicationRecord
       { tag: t.strip, internal: internal } if t.present?
     end.compact
     taggings.create(tags)
+  end
+
+  # When a speaker makes minor changes to their submitted proposal (such as fixing a typo),
+  # the associated program_session becomes outdated. Consequently, the program.json also becomes outdated.
+  # Strictly, organizers should prohibit speakers from editing their submitted proposals directly.
+  # However, for practical reasons, we allow modifications by speakers.
+  def sync_program_session
+    if program_session.present?
+      program_session.update!(title: title, abstract: abstract)
+    end
   end
 
   def has_public_reviewer_comments?

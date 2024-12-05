@@ -164,5 +164,26 @@ describe ProposalsController, type: :controller do
                       pitch: 'new_pitch' }}
       }.to change { Notification.count }.by(1)
     end
+
+    context "when the proposal approved (has program_session)" do
+      let!(:program_session) { create(:program_session, proposal: proposal, track: proposal.track, speakers: [speaker]) }
+
+      before do
+        proposal.update(title: 'orig_title', abstract: "orig_abst", pitch: 'orig_pitch')
+        program_session.update(title: 'orig_title', abstract: "orig_abst")
+      end
+
+      it "updates the program_session attributes also" do
+        put :update, params: {event_slug: proposal.event.slug, uuid: proposal,
+          proposal: { title: 'new_title', abstract: 'new_abst', pitch: 'new_pitch' }}
+
+      proposal.reload
+      program_session.reload
+      expect(proposal.title).to eq('new_title')
+      expect(proposal.pitch).to eq('new_pitch')
+      expect(program_session.title).to eq('new_title')
+      expect(program_session.abstract).to eq('new_abst')
+      end
+    end
   end
 end
