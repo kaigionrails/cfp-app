@@ -1,8 +1,8 @@
-FROM public.ecr.aws/docker/library/ruby:3.1.6-slim-bullseye as builder
+FROM public.ecr.aws/docker/library/ruby:3.4.2-slim-bookworm as builder
 WORKDIR /app
 
 RUN apt-get update \
-    && apt-get install -y curl git libpq-dev build-essential \
+    && apt-get install -y curl git libpq-dev build-essential imagemagick libyaml-dev \
     && curl -sL https://deb.nodesource.com/setup_18.x | bash - \
     && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
