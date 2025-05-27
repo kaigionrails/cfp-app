@@ -32,12 +32,12 @@ class EventDecorator < ApplicationDecorator
   end
 
   def cfp_days_remaining
-    ((object.closes_at - DateTime.current).to_i / 1.day) if object.closes_at && (object.closes_at - DateTime.now).to_i / 1.day > 1
+    ((object.closes_at - Time.current).to_i / 1.day) if object.closes_at && (object.closes_at - Time.current).to_i / 1.day > 1
   end
 
   def closes_at(format = nil)
     if format && object.closes_at
-      object.closes_at.to_s(format)
+      object.closes_at.to_fs(format)
     else
       object.closes_at
     end
@@ -54,7 +54,7 @@ class EventDecorator < ApplicationDecorator
 
   def reviewed_percent
     if proposals.count > 1
-      "#{((object.proposals.rated.count.to_f/object.proposals.count.to_f)*100).round(1)}%"
+      "#{((object.proposals.rated.count.to_f/object.proposals.count)*100).round(1)}%"
     else
       "0%"
     end
@@ -75,8 +75,8 @@ class EventDecorator < ApplicationDecorator
   end
 
   def confirmed_percent
-    if proposals.accepted.confirmed.count > 0
-      "#{((object.proposals.accepted.confirmed.count.to_f/object.proposals.accepted.count.to_f)*100).round(1)}%"
+    if (accepted_confirmed_count = proposals.accepted.confirmed.count) > 0
+      "#{((accepted_confirmed_count.to_f / object.proposals.accepted.count) * 100).round(1)}%"
     else
       "0%"
     end
@@ -98,8 +98,8 @@ class EventDecorator < ApplicationDecorator
   end
 
   def waitlisted_percent
-    if proposals.waitlisted.confirmed.count > 0
-      "#{((object.proposals.waitlisted.confirmed.count.to_f/object.proposals.waitlisted.count.to_f)*100).round(1)}%"
+    if (waitlisted_confirmed_count = proposals.waitlisted.confirmed.count) > 0
+      "#{((waitlisted_confirmed_count.to_f / object.proposals.waitlisted.count) * 100).round(1)}%"
     else
       "0%"
     end
@@ -123,19 +123,16 @@ class EventDecorator < ApplicationDecorator
   private
 
   def proposal_date_range
-    now = DateTime.now
-    if object.proposals.present? && object.closes_at
-      event_first_proposal_created_at =
-        object.proposals.order(created_at: :asc).pluck(:created_at).first
+    now = Time.current
 
-      proposal_date_range =
-        event_first_proposal_created_at..(now < object.closes_at ? now : object.closes_at )
+    if object.closes_at && (event_first_proposal_created_at = object.proposals.order(created_at: :asc).pick(:created_at))
+      event_first_proposal_created_at..(now < object.closes_at ? now : object.closes_at )
     else
-      proposal_date_range = (now..(now + 3.months))
+      (now..(now + 3.months))
     end
   end
 
   def format_date(date)
-      date.to_s(:long) if date.present?
+      date.to_fs(:long) if date.present?
   end
 end

@@ -2,6 +2,7 @@ class ProposalsController < ApplicationController
   before_action :require_event, except: :index
   before_action :require_user
   before_action :require_proposal, except: [ :index, :create, :new, :parse_edit_field ]
+  before_action :load_proposal_associations, only: :show
   before_action :require_invite_or_speaker, only: [:show]
   before_action :require_speaker, except: [ :index, :create, :new, :parse_edit_field ]
   around_action :set_locale
@@ -9,7 +10,9 @@ class ProposalsController < ApplicationController
   decorates_assigned :proposal
 
   def index
-    proposals = current_user.proposals.decorate.group_by {|p| p.event}
+    proposals = current_user.proposals.
+      select("proposals.*, (#{PublicComment.select('count(*)').where('proposal_id = proposals.id').to_sql}) as public_comments_count").
+      includes(:event, {speakers: :user}, :session_format).order(event_id: :desc).decorate.group_by {|p| p.event}
     invitations = current_user.pending_invitations.decorate.group_by {|inv| inv.proposal.event}
     events = (proposals.keys | invitations.keys).uniq
 
@@ -18,23 +21,6 @@ class ProposalsController < ApplicationController
         proposals: proposals,
         invitations: invitations
     }
-  end
-
-  def finalized_notification
-    @proposal = proposal # because drapper won't set the instance variable
-
-    email_template = case @proposal.state
-      when Proposal::State::ACCEPTED
-        'accept_email'
-      when Proposal::State::REJECTED
-        'reject_email'
-      when Proposal::State::WAITLISTED
-        'waitlist_email'
-    end
-
-    markdown_string = render_to_string "staff/proposal_mailer/#{email_template}", layout: false, formats: :md
-
-    @body = Redcarpet::Markdown.new(Redcarpet::Render::HTML).render(markdown_string)
   end
 
   def new
@@ -122,7 +108,7 @@ class ProposalsController < ApplicationController
 
   def update
     if params[:confirm]
-      @proposal.update(confirmed_at: DateTime.current)
+      @proposal.update(confirmed_at: Time.current)
       redirect_to event_event_proposals_url(slug: @event.slug, uuid: @proposal), flash: { success: "Thank you for confirming your participation" }
     elsif @proposal.speaker_update_and_notify(proposal_params)
       redirect_to event_proposal_url(event_slug: @event.slug, uuid: @proposal)
@@ -132,13 +118,12 @@ class ProposalsController < ApplicationController
     end
   end
 
-  include ApplicationHelper
   def parse_edit_field
     respond_to do |format|
       format.js do
         render locals: {
-          field_id: params[:id],
-          text: markdown(params[:text])
+          field_name: params[:name],
+          text: params[:text]
         }
       end
     end
@@ -154,6 +139,11 @@ class ProposalsController < ApplicationController
 
   def notes_params
     params.require(:proposal).permit(:confirmation_notes)
+  end
+
+  def load_proposal_associations
+    @proposal.speakers.load
+    @proposal.public_comments.load
   end
 
   def require_invite_or_speaker
@@ -175,7 +165,7 @@ class ProposalsController < ApplicationController
     message << "<p>Your proposal has been submitted and may be reviewed at any time while the CFP is open.  You are welcome to update your proposal or leave a comment at any time, just please be sure to preserve your anonymity."
 
     if @event.closes_at
-      message << "  Expect a response regarding acceptance after the CFP closes on #{@event.closes_at.to_s(:long)}."
+      message << "  Expect a response regarding acceptance after the CFP closes on #{@event.closes_at.to_fs(:long)}."
     end
 
     message << "</p>"
@@ -188,11 +178,10 @@ class ProposalsController < ApplicationController
   end
 
   def incomplete_profile_msg
-    if profile_errors = current_user.profile_errors
-      msg = "Before submitting a proposal your profile needs completing. Please correct the following: "
+    if (profile_errors = current_user.profile_errors)
+      msg = "Before submitting a proposal your profile needs completing. Please correct the following: ".html_safe
       msg << profile_errors.full_messages.to_sentence
-      msg << ". Visit #{view_context.link_to('My Profile', edit_profile_path)} to update."
-      msg.html_safe
+      msg << ". Visit " << view_context.link_to('My Profile', edit_profile_path) << " to update."
     end
   end
 

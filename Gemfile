@@ -6,24 +6,22 @@ source 'https://rubygems.org'
 ruby File.read(".ruby-version").strip
 
 gem 'puma'
-gem 'rails', '~> 6.1.6'
-gem 'mimemagic', github: 'mimemagicrb/mimemagic', ref: '01f92d86d15d85cfd0f20dabd025dcbd36a8a60f'
+gem 'rails', '~> 8.0.2'
+gem 'mimemagic'
 gem 'mime-types-data'
 gem 'mime-types'
 gem 'rexml'
 gem 'matrix'
 gem "sentry-ruby"
 gem "sentry-rails"
+gem 'honeybadger', '~> 5.27'
 
-# Required until Rails 7 - https://github.com/mikel/mail/pull/1472#issuecomment-1165161541
-gem 'net-smtp', require: false
-gem 'net-imap', require: false
-gem 'net-pop', require: false
+gem 'csv'
 
 gem 'pg'
 
 gem 'bootstrap-sass', '~> 3.4.1'
-gem 'haml', '~> 5.0'
+gem 'haml'
 gem 'jbuilder'
 gem 'jquery-datatables-rails'
 gem 'jquery-rails'
@@ -34,14 +32,14 @@ gem 'selectize-rails'
 gem 'uglifier', '>= 1.3.0'
 gem 'underscore-rails'
 
-gem 'devise', '~> 4.8'
+gem 'devise', '~> 4.9'
 gem 'omniauth-github'
 gem 'omniauth-twitter'
 gem "omniauth-rails_csrf_protection", "~> 1.0"
 
 gem 'actionview-encoded_mail_to'
-gem 'active_model_serializers', '~> 0.10.0'
-gem 'bootsnap', '~> 1.13', require: false
+gem 'active_model_serializers', '~> 0.10.15'
+gem 'bootsnap', '~> 1.18', require: false
 gem 'bootstrap-multiselect-rails', '~> 0.9.9'
 gem 'chartkick'
 gem 'coderay', '~> 1.0'
@@ -52,11 +50,11 @@ gem 'fastly'
 gem 'groupdate'
 gem 'nokogiri'
 gem 'pundit'
-gem 'redcarpet', '~> 3.5'
+gem 'redcarpet', '~> 3.6'
 gem 'simple_form'
 gem 'tinymce-rails'
-gem 'rails-i18n', '~> 6.0'
-gem 'image_processing', '~> 1.13'
+gem 'rails-i18n', '~> 8.0'
+gem 'image_processing', '~> 1.14'
 gem 'react-rails'
 gem 'shakapacker', '~> 6.6'
 
@@ -70,7 +68,7 @@ gem 'sendgrid-ruby'
 
 group :production do
   gem 'aws-sdk-s3'
-  gem 'rack-timeout', '~> 0.6'
+  gem 'rack-timeout', '~> 0.7'
 end
 
 group :development do
@@ -79,15 +77,12 @@ group :development do
   gem 'binding_of_caller'
   gem 'foreman'
   gem 'haml-rails'
-  gem 'html2haml', '~> 2.2'
   gem 'launchy'
   gem 'rack-mini-profiler'
-  gem 'spring-commands-rspec', require: false
   gem 'web-console'
 end
 
 group :development, :test do
-  gem 'amazing_print', require: false
   gem 'capybara', '~> 3.37'
   gem 'database_cleaner', '~> 2.1'
   gem 'dotenv-rails'
@@ -96,13 +91,9 @@ group :development, :test do
   gem 'guard'
   gem 'guard-livereload', '~> 2.1'
   gem 'guard-rspec'
-  gem 'pry-rails'
-  gem 'pry-remote'
-  gem 'pry-rescue'
   gem 'rails-controller-testing'
   gem 'rspec'
   gem 'rspec-rails'
   gem 'selenium-webdriver'
-  gem 'spring'
   gem 'timecop'
 end

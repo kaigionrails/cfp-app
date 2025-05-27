@@ -1,15 +1,15 @@
 Rails.application.routes.draw do
-  # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
-
-  constraints DomainConstraint.new do
-    get '/', to: 'pages#show'
-    get '/(:slug)/program', to: 'programs#show'
-    get '/(:slug)/schedule', to: 'schedule#show'
-    get '/(:slug)/sponsors', to: 'sponsors#show'
-    get '/(:slug)/banner_ads', to: 'sponsors#banner_ads'
-    get '/(:slug)/sponsors_footer', to: 'sponsors#sponsors_footer'
-    get '/:domain_page_or_slug', to: 'pages#show'
-    get '/:slug/:page', to: 'pages#show'
+  unless ENV['DISABLE_WEBSITE']
+    constraints DomainConstraint.new do
+      get '/', to: 'pages#show'
+      get '/(:slug)/program', to: 'programs#show'
+      get '/(:slug)/schedule', to: 'schedule#show'
+      get '/(:slug)/sponsors', to: 'sponsors#show'
+      get '/(:slug)/banner_ads', to: 'sponsors#banner_ads'
+      get '/(:slug)/sponsors_footer', to: 'sponsors#sponsors_footer'
+      get '/:domain_page_or_slug', to: 'pages#show'
+      get '/:slug/:page', to: 'pages#show'
+    end
   end
 
   root 'home#show'
@@ -27,15 +27,12 @@ Rails.application.routes.draw do
   resources :events, param: :slug do
     get '/' => 'events#show', as: :event
 
-    post '/proposals' => 'proposals#create', as: :event_proposals
-
     resources :proposals, param: :uuid do
       member { post :confirm }
       member { post :withdraw }
       member { post :decline }
       member { post :update_notes }
       member { delete :destroy }
-      member { get :finalized_notification }
     end
 
     get 'parse_edit_field' => 'proposals#parse_edit_field', as: :parse_edit_field_proposal
@@ -174,5 +171,4 @@ Rails.application.routes.draw do
   get '/(:slug)/schedule', to: 'schedule#show', as: :schedule
   get '/(:slug)/sponsors', to: 'sponsors#show', as: :sponsors
   get '/(:slug)/:page', to: 'pages#show', as: :page
-
 end

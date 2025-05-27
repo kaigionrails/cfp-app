@@ -60,13 +60,17 @@ class ProposalDecorator < ApplicationDecorator
   end
 
   def review_tags_labels
-    object.review_tags.map { |tag|
-      h.content_tag :span, tag, class: 'label label-success label-compact' }.join("\n").html_safe
+    h.safe_join(
+      object.review_tags.map { |tag| h.content_tag :span, tag, class: 'label label-success label-compact' },
+      "\n"
+    )
   end
 
   def tags_labels
-    object.tags.map { |tag|
-      h.content_tag :span, tag, class: 'label label-primary label-compact' }.join("\n").html_safe
+    h.safe_join(
+      object.tags.map { |tag| h.content_tag :span, tag, class: 'label label-primary label-compact' },
+      "\n"
+    )
   end
 
   def review_tags_list
@@ -106,8 +110,7 @@ class ProposalDecorator < ApplicationDecorator
       h.withdraw_event_proposal_path(uuid: object, event_slug: object.event.slug),
       method: :post,
       data: {
-        confirm: 'This will remove your talk from consideration and send an ' +
-                 'email to the event coordinator. Are you sure you want to do this?'
+        confirm: 'This will remove your talk from consideration and send an email to the event coordinator. Are you sure you want to do this?'
       },
       class: 'btn btn-warning',
       id: 'withdraw'
@@ -132,7 +135,7 @@ class ProposalDecorator < ApplicationDecorator
 
   def confirm_link
     h.link_to 'confirmation page',
-      h.event_proposal_url(object.event, object)
+      h.event_proposal_url(object.event, object, protocol: 'https')
   end
 
   def state_label(small: false, state: nil, show_confirmed: false)

@@ -53,15 +53,17 @@ module ApplicationHelper
   end
 
   def show_flash
-    flash.map do |key, value|
-      key += " alert-info" if key == "notice" || key == 'confirm'
-      key = "danger" if key == "alert"
-      content_tag(:div, class: "container alert alert-dismissable alert-#{key}") do
-        content_tag(:button, content_tag(:span, '', class: 'glyphicon glyphicon-remove'),
-                    class: 'close', data: {dismiss: 'alert'}) +
-          simple_format(value)
+    safe_join(
+      flash.map do |key, value|
+        key += " alert-info" if key == "notice" || key == 'confirm'
+        key = "danger" if key == "alert"
+        content_tag(:div, class: "container alert alert-dismissable alert-#{key}") do
+          content_tag(:button, content_tag(:span, '', class: 'glyphicon glyphicon-remove'),
+                      class: 'close', data: {dismiss: 'alert'}) +
+            simple_format(value)
+        end
       end
-    end.join.html_safe
+    )
   end
 
   def copy_email_btn
@@ -99,23 +101,23 @@ module ApplicationHelper
   end
 
   def speaker_nav?
-    current_user.proposals.present? || current_user.pending_invitations.present?
+    current_user.proposals.any? || current_user.pending_invitations.any?
   end
 
-  def review_nav?
-    current_user.reviewer_for_event?(current_event)
+  def review_nav?(roles)
+    (roles & Teammate::STAFF_ROLES).any?
   end
 
-  def program_nav?
-    (current_user.program_team_for_event?(current_event) && current_event.closed?) || current_user.organizer_for_event?(current_event)
+  def program_nav?(roles)
+    ((roles & Teammate::PROGRAM_TEAM_ROLES).any? && current_event.closed?) || roles.include?('organizer')
   end
 
-  def schedule_nav?
-    current_user.organizer_for_event?(current_event)
+  def schedule_nav?(roles)
+    roles.include?('organizer')
   end
 
-  def staff_nav?
-    current_user.staff_for?(current_event)
+  def staff_nav?(roles)
+    roles.any?
   end
 
   def website_nav?

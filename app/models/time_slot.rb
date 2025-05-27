@@ -5,8 +5,6 @@ class TimeSlot < ApplicationRecord
   belongs_to :event
   belongs_to :sponsor, optional: true
 
-  attr_reader :session_duration
-
   DEFAULT_TIME = Time.current.beginning_of_day.change(hour: 9)
   DEFAULT_DURATION = 60 # minutes
   STANDARD_LENGTH = 40.minutes
@@ -146,6 +144,7 @@ end
 #  created_at         :datetime
 #  updated_at         :datetime
 #  track_id           :integer
+#  sponsor_id         :integer
 #
 # Indexes
 #
@@ -153,4 +152,6 @@ end
 #  index_time_slots_on_event_id            (event_id)
 #  index_time_slots_on_program_session_id  (program_session_id)
 #  index_time_slots_on_room_id             (room_id)
+#  index_time_slots_on_sponsor_id          (sponsor_id)
+#  index_time_slots_on_track_id            (track_id)
 #

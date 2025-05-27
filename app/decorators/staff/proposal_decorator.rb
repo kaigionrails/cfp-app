@@ -23,7 +23,7 @@ class Staff::ProposalDecorator < ProposalDecorator
     btns << hard_reset_button if show_hard_reset
     btns << finalize_state_button if show_finalize
 
-    btns.join("\n").html_safe
+    h.safe_join(btns, "\n")
   end
 
   def small_state_buttons
@@ -53,8 +53,7 @@ class Staff::ProposalDecorator < ProposalDecorator
       method: :delete,
       data: {
         confirm:
-          'This will delete this talk. Are you sure you want to do this? ' +
-          'It can not be undone.'
+          'This will delete this talk. Are you sure you want to do this? It can not be undone.'
       },
       class: 'btn btn-danger navbar-btn',
       id: 'delete' do
@@ -63,11 +62,11 @@ class Staff::ProposalDecorator < ProposalDecorator
   end
 
   def created_at
-    object.created_at.to_s(:short)
+    object.created_at.to_fs(:short)
   end
 
   def updated_by_speaker_at
-    object.updated_by_speaker_at.to_s(:short)
+    object.updated_by_speaker_at.to_fs(:short)
   end
 
   def comment_count
@@ -89,8 +88,7 @@ class Staff::ProposalDecorator < ProposalDecorator
                  h.event_staff_program_proposal_finalize_path(object.event, object),
                  data: {
                    confirm:
-                     'Finalizing the state will prevent any additional state changes, ' +
-                     'and emails will be sent to all speakers. Are you sure you want to continue?'
+                     'Finalizing the state will prevent any additional state changes, and emails will be sent to all speakers. Are you sure you want to continue?'
                  },
                  type: 'btn-warning',
                  hidden: finalize_button_hidden?,

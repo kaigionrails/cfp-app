@@ -3,15 +3,15 @@ class Staff::TimeSlotDecorator < Draper::Decorator
   delegate_all
 
   def start_time
-    object.start_time.try(:to_s, :time_p)
+    object.start_time.try(:to_fs, :time_p)
   end
 
   def end_time
-    object.end_time.try(:to_s, :time_p)
+    object.end_time.try(:to_fs, :time_p)
   end
 
   def session_duration
-    "#{object.session_duration.try(:to_s, :time)} minutes"
+    "#{object.session_duration.try(:to_fs, :time)} minutes"
   end
 
   def time_slot_id
@@ -38,7 +38,7 @@ class Staff::TimeSlotDecorator < Draper::Decorator
   end
 
   def action_links
-    [
+    links = [
       h.link_to('Edit',
                 h.edit_event_staff_schedule_time_slot_path(object.event, object),
                 class: 'btn btn-primary btn-xs',
@@ -51,7 +51,8 @@ class Staff::TimeSlotDecorator < Draper::Decorator
                 data: {confirm: "Are you sure you want to remove this time slot?"},
                 remote: true,
                 class: 'btn btn-danger btn-xs')
-    ].join("\n").html_safe
+    ]
+    h.safe_join(links, "\n")
   end
 
   def unscheduled_program_sessions

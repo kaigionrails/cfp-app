@@ -15,7 +15,6 @@ class Proposal < ApplicationRecord
   has_many :invitations, dependent: :destroy
 
   belongs_to :event
-  has_one :time_slot
   has_one :program_session
   belongs_to :session_format
   belongs_to :track, optional: true
@@ -27,12 +26,13 @@ class Proposal < ApplicationRecord
   validates_inclusion_of :state, in: FINAL_STATES, allow_nil: false, message: "'%{value}' not a confirmable state.",
                                  if: :confirmed_at_changed?
 
-  serialize :last_change
-  serialize :proposal_data, Hash
+  serialize :last_change, coder: YAML
+  serialize :proposal_data, type: Hash, coder: YAML
 
   has_paper_trail only: %i[title abstract details pitch]
 
-  attr_accessor :tags, :review_tags, :updating_user
+  attr_accessor :updating_user
+  attr_writer :tags, :review_tags
 
   accepts_nested_attributes_for :public_comments, reject_if: proc { |comment_attributes| comment_attributes[:body].blank? }
   accepts_nested_attributes_for :speakers
@@ -52,10 +52,10 @@ class Proposal < ApplicationRecord
   scope :soft_states, -> { where(state: SOFT_STATES) }
   scope :working_program, -> { where(state: [SOFT_ACCEPTED, SOFT_WAITLISTED, ACCEPTED, WAITLISTED]) }
 
-  scope :unrated, -> { where('id NOT IN ( SELECT proposal_id FROM ratings )') }
-  scope :rated, -> { where('id IN ( SELECT proposal_id FROM ratings )') }
+  scope :unrated, -> { where.not(id: Rating.select(:proposal_id)) }
+  scope :rated, -> { where(id: Rating.select(:proposal_id)) }
   scope :not_withdrawn, -> { where.not(state: WITHDRAWN) }
-  scope :not_owned_by, ->(user) { where.not(id: user.proposals.map(&:id)) }
+  scope :not_owned_by, ->(user) { where.not(id: user.proposals) }
   scope :for_state, lambda { |state|
     where(state: state).order(:title).includes(:event, { speakers: :user }, :review_taggings)
   }
@@ -141,7 +141,7 @@ class Proposal < ApplicationRecord
   end
 
   def confirm
-    update(confirmed_at: DateTime.current)
+    update(confirmed_at: Time.current)
     program_session.confirm if program_session.present?
   end
 
@@ -150,7 +150,7 @@ class Proposal < ApplicationRecord
   end
 
   def decline
-    update(state: WITHDRAWN, confirmed_at: DateTime.current)
+    update(state: WITHDRAWN, confirmed_at: Time.current)
     program_session.update(state: ProgramSession::DECLINED)
   end
 
@@ -211,7 +211,11 @@ class Proposal < ApplicationRecord
   end
 
   def has_speaker?(user)
-    speakers.where(user_id: user).exists?
+    if speakers.loaded?
+      speakers.any? {|s| s.user_id == user.id }
+    else
+      speakers.where(user_id: user).exists?
+    end
   end
 
   def has_invited?(user)

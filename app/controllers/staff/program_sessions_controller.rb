@@ -8,7 +8,7 @@ class Staff::ProgramSessionsController < Staff::ApplicationController
   decorates_assigned :waitlisted_sessions, with: Staff::ProgramSessionDecorator
 
   def index
-    @sessions = current_event.program_sessions.includes(:speakers)
+    @sessions = current_event.program_sessions.includes(:speakers, :session_format, :track, :time_slot, :proposal)
     session[:prev_page] = { name: 'Program', path: event_staff_program_sessions_path(current_event) }
 
     respond_to do |format|
@@ -98,6 +98,6 @@ class Staff::ProgramSessionsController < Staff::ApplicationController
   end
 
   def json_filename
-    "#{current_event.slug}-program-#{DateTime.current.to_s(:db_just_date)}.json"
+    "#{current_event.slug}-program-#{Time.current.to_fs(:db_just_date)}.json"
   end
 end

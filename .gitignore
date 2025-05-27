@@ -254,5 +254,16 @@ fabric.properties
 
 # End of https://www.toptal.com/developers/gitignore/api/rubymine
 
+/public/packs
+/public/packs-test
+/node_modules
+/yarn-error.log
+yarn-debug.log*
+.yarn-integrity
+
+/config/credentials/development.key
+
+/config/credentials/test.key
+
 # auto generate file
 deploy/apprunner.json

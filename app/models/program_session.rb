@@ -36,7 +36,7 @@ class ProgramSession < ApplicationRecord
   }
 
   belongs_to :event
-  belongs_to :proposal
+  belongs_to :proposal, optional: true
   belongs_to :track, optional: true
   belongs_to :session_format
   has_one :time_slot, dependent: :nullify
@@ -49,7 +49,7 @@ class ProgramSession < ApplicationRecord
 
   validates_inclusion_of :state, in: STATES
 
-  serialize :info, Hash
+  serialize :info, type: Hash, coder: YAML
 
   after_destroy :destroy_speakers
 

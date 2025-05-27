@@ -3,7 +3,6 @@ class ApplicationController < ActionController::Base
   include ActivateNavigation
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
-  require "csv"
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
@@ -25,12 +24,14 @@ class ApplicationController < ActionController::Base
   layout 'application'
   decorates_assigned :event
 
+  private
+
   def after_sign_in_path_for(user)
     if session[:pending_invite_accept_url]
       session[:pending_invite_accept_url]
     elsif !user.complete?
       edit_profile_path
-    elsif request.referrer.present? && request.referrer != new_user_session_url
+    elsif request.referrer.present? && (request.referrer != new_user_session_url) && (request.referrer != user_developer_omniauth_authorize_url)
       request.referrer
     elsif session[:target]
       session.delete(:target)
@@ -46,8 +47,6 @@ class ApplicationController < ActionController::Base
       root_path
     end
   end
-
-  private
 
   def current_event
     @current_event ||= set_current_event(session[:current_event_id]) if session[:current_event_id]
@@ -78,8 +77,9 @@ class ApplicationController < ActionController::Base
     Website.domain_match(request.domain).joins(:event).order(created_at: :desc)
   end
 
-  def set_current_event(event_id)
-    @current_event = Event.find_by(id: event_id).try(:decorate)
+  def set_current_event(event_or_event_id)
+    event_or_event_id = Event.find_by(id: event_or_event_id) unless Event === event_or_event_id
+    @current_event = event_or_event_id.try(:decorate)
     session[:current_event_id] = @current_event.try(:id)
     @current_event
   end
@@ -107,9 +107,14 @@ class ApplicationController < ActionController::Base
   end
 
   def require_event
-    @event = Event.find_by(slug: params[:event_slug] || params[:slug])
+    slug = params[:event_slug] || params[:slug]
+    @event = if @current_event && (@current_event.slug == slug)
+      @current_event
+    else
+      Event.find_by(slug: params[:event_slug] || params[:slug])
+    end
     if @event
-      set_current_event(event.id)
+      set_current_event(@event)
     else
       flash[:danger] = "Your event could not be found, please check the url."
       redirect_to events_path
@@ -122,10 +127,6 @@ class ApplicationController < ActionController::Base
 
   def require_proposal
     @proposal = @event.proposals.find_by!(uuid: params[:proposal_uuid] || params[:uuid])
-  end
-
-  def require_website
-    redirect_to not_found_path and return unless current_website
   end
 
   def user_not_authorized

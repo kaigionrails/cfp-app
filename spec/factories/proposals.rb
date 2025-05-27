@@ -9,7 +9,7 @@ FactoryBot.define do
 
     factory :proposal_with_track do
       event
-      sequence(:title) { |i| "A fine proposal#{i}" }
+      sequence(:title) { |i| "A fine proposal with track#{i}" }
       abstract { Faker::Hacker.say_something_smart }
       details { Faker::Hipster.sentence }
       pitch { Faker::Superhero.name }
@@ -19,7 +19,7 @@ FactoryBot.define do
 
     trait :with_reviewer_public_comment do
       after(:create) do |proposal|
-        reviewer = FactoryBot.create(:user, :reviewer)
+        reviewer = FactoryBot.create(:reviewer, event: proposal.event)
         FactoryBot.create(:comment, proposal: proposal, type: "PublicComment", user: reviewer, body: "Reviewer comment" )
       end
     end

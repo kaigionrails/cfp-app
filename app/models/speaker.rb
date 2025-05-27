@@ -1,13 +1,12 @@
 class Speaker < ApplicationRecord
-  belongs_to :user
+  belongs_to :user, optional: true
   belongs_to :event
   belongs_to :proposal, optional: true
   belongs_to :program_session, optional: true
 
   has_many :proposals, through: :user
-  has_many :program_sessions
 
-  serialize :info, Hash
+  serialize :info, type: Hash, coder: YAML
 
   validates :event, presence: true
   validates :bio, length: {maximum: 500}
@@ -51,10 +50,6 @@ end
 #  info               :text
 #  created_at         :datetime
 #  updated_at         :datetime
-#  age_range          :string
-#  ethnicity          :string
-#  first_time_speaker :boolean
-#  pronouns           :string
 #
 # Indexes
 #

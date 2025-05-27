@@ -6,7 +6,7 @@ class Staff::SpeakersController < Staff::ApplicationController
   before_action :enable_staff_program_subnav
 
   def index
-    @program_speakers = current_event.speakers.in_program
+    @program_speakers = current_event.speakers.in_program.includes(program_session: [:track, :session_format])
   end
 
   def new
@@ -21,7 +21,7 @@ class Staff::SpeakersController < Staff::ApplicationController
     if @speaker.save
       redirect_to event_staff_program_session_path(current_event, @program_session)
     else
-      flash[:danger] = "There was a problem saving this speaker."
+      flash[:danger] = "There was a problem saving this speaker: #{@speaker.errors.full_messages.to_sentence}."
       render :new
     end
   end

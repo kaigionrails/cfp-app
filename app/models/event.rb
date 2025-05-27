@@ -17,18 +17,17 @@ class Event < ApplicationRecord
 
   accepts_nested_attributes_for :proposals
 
-  serialize :proposal_tags, Array
-  serialize :review_tags, Array
-  serialize :custom_fields, Array
-  serialize :settings, Hash
-  serialize :speaker_notification_emails, Hash
+  serialize :proposal_tags, type: Array, coder: YAML
+  serialize :review_tags, type: Array, coder: YAML
+  serialize :custom_fields, type: Array, coder: YAML
+  serialize :settings, type: Hash, coder: YAML
+  serialize :speaker_notification_emails, type: Hash, coder: YAML
 
   store_accessor :speaker_notification_emails, :accept
   store_accessor :speaker_notification_emails, :reject
   store_accessor :speaker_notification_emails, :waitlist
 
   scope :a_to_z, -> { order('name ASC') }
-  scope :closes_up, -> { order('closes_at ASC') }
   scope :live, -> { where("state = 'open' and (closes_at is null or closes_at > ?)", Time.current) }
   scope :not_draft, -> { where "state != 'draft'"}
 
@@ -151,7 +150,7 @@ class Event < ApplicationRecord
     missing_prereqs << "Event must have a start date" unless start_date
     missing_prereqs << "Event must have a end date" unless end_date
 
-    unless rooms.size > 0
+    unless rooms.exists?
       missing_prereqs << "Event must have at least one room"
     end
 
@@ -195,11 +194,11 @@ class Event < ApplicationRecord
   end
 
   def cfp_opens
-    opens_at.try(:to_s, :long_with_zone)
+    opens_at.try(:to_fs, :long_with_zone)
   end
 
   def cfp_closes
-    closes_at.try(:to_s, :long_with_zone)
+    closes_at.try(:to_fs, :long_with_zone)
   end
 
   def conference_date(conference_day)
@@ -231,7 +230,7 @@ class Event < ApplicationRecord
 
   def update_closes_at_if_manually_closed
     if changes.key?(:state) && changes[:state] == [STATUSES[:open], STATUSES[:closed]]
-      self.closes_at = DateTime.now
+      self.closes_at = Time.current
     end
   end
 end
