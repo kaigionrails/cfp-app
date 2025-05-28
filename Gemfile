@@ -58,7 +58,7 @@ gem 'image_processing', '~> 1.14'
 gem 'react-rails'
 gem 'shakapacker', '~> 6.6'
 
-gem 'sidekiq'
+gem 'sidekiq', "~> 7.0" # Due to Redis v6 compatibility
 gem 'redis', "~> 4.0"
 
 gem 'diffy'
