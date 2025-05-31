@@ -518,7 +518,7 @@ GEM
     sentry-ruby (5.17.3)
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.0.2)
-    shakapacker (7.2.3)
+    shakapacker (8.3.0)
       activesupport (>= 5.2)
       package_json
       rack-proxy (>= 0.6.1)
@@ -650,7 +650,7 @@ DEPENDENCIES
   sendgrid-ruby
   sentry-rails
   sentry-ruby
-  shakapacker (~> 7.0)
+  shakapacker (~> 8.0)
   sidekiq (~> 7.0)
   simple_form
   timecop

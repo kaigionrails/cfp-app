@@ -56,7 +56,7 @@ gem 'tinymce-rails'
 gem 'rails-i18n', '~> 8.0'
 gem 'image_processing', '~> 1.14'
 gem 'react-rails'
-gem 'shakapacker', '~> 7.0'
+gem 'shakapacker', '~> 8.0'
 
 gem 'sidekiq', "~> 7.0" # Due to Redis v6 compatibility
 gem 'redis', "~> 4.0"
