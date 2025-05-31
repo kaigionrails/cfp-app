@@ -18,6 +18,10 @@ $dark-blue: #063E5E;
 $bright-blue: #1A95DD;
 $green: #189138;
 
+$kaigionrails_2025_primary: #292220;
+$kaigionrails_2025_bg: #d7d2d0;
+$kaigionrails_2025_black: #000505;
+
 $gray-base:              $black !default;
 $gray-darker:            lighten($gray-base, 13.5%) !default; // #222
 $gray-dark:              lighten($gray-base, 20%) !default;   // #333
@@ -26,7 +30,7 @@ $gray-light:             #b2afaa !default; //lighten($gray-base, 46.7%) !default
 $gray-lighter:           lighten($gray-base, 93.5%) !default; // #eee
 $beige:                  #f9f6f1;
 
-$brand-primary:         $ruby-central-red !default; //darken(#428bca, 6.5%) !default; // #337ab7
+$brand-primary:         $kaigionrails_2025_primary !default; //darken(#428bca, 6.5%) !default; // #337ab7
 $brand-success:         $green !default;
 $brand-info:            $bright-blue !default;
 $brand-info-alt:        $dark-blue !default;
@@ -391,7 +395,7 @@ $navbar-padding-vertical:          (($navbar-height - $line-height-computed) / 2
 $navbar-collapse-max-height:       340px !default;
 
 $navbar-default-color:             $white !default;
-$navbar-default-bg:                $brand-primary !default;
+$navbar-default-bg:                $kaigionrails_2025_primary !default;
 $navbar-default-border:            darken($navbar-default-bg, 6.5%) !default;
 
 // Navbar links
