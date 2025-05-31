@@ -17,7 +17,13 @@ const customConfig = {
       '.jpeg',
       '.jpg'
     ]
-  }
+  },
+  ignoreWarnings: [
+    {
+      module: /tailwind/,
+      message: /Critical dependency: the request of a dependency is an expression/
+    }
+  ]
 }
 
 module.exports = merge(generateWebpackConfig(), customConfig)
