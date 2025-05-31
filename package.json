@@ -48,5 +48,6 @@
   "browserslist": [
     "defaults",
     "IE 11"
-  ]
+  ],
+  "packageManager": "yarn@1.22.22"
 }
