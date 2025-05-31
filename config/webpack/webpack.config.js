@@ -1,4 +1,4 @@
-const { webpackConfig, merge } = require('shakapacker')
+const { generateWebpackConfig, merge } = require('shakapacker')
 
 const customConfig = {
   resolve: {
@@ -17,7 +17,13 @@ const customConfig = {
       '.jpeg',
       '.jpg'
     ]
-  }
+  },
+  ignoreWarnings: [
+    {
+      module: /tailwind/,
+      message: /Critical dependency: the request of a dependency is an expression/
+    }
+  ]
 }
 
-module.exports = merge(webpackConfig, customConfig)
+module.exports = merge(generateWebpackConfig(), customConfig)
