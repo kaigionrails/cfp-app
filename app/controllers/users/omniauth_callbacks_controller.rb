@@ -39,7 +39,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       @user.skip_confirmation!
       sign_in @user
 
-      redirect_to after_sign_in_path_for(@user), allow_other_host: true
+      redirect_to after_sign_in_path_for(@user)
 
     else
       redirect_to new_user_session_url, danger: "There was an error authenticating via Auth provider: #{params[:provider]}."
