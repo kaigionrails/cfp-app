@@ -32,7 +32,7 @@ class ApplicationController < ActionController::Base
     elsif !user.complete?
       edit_profile_path
     elsif request.referrer.present? && (request.referrer != new_user_session_url) && (request.referrer != user_developer_omniauth_authorize_url)
-      request.referrer
+      URI.parse(request.referrer).path # sign in with x account, referrer setted api.x.com, we don't want to redirect to that
     elsif session[:target]
       session.delete(:target)
     elsif user.staff_for?(current_event)
