@@ -6,6 +6,7 @@ source 'https://rubygems.org'
 ruby File.read(".ruby-version").strip
 
 gem 'puma'
+gem 'rack', '~> 3.0.0' # Rack v3.1 introduces breaking changes for social login
 gem 'rails', '~> 8.0.2'
 gem 'mimemagic'
 gem 'mime-types-data'

@@ -385,7 +385,7 @@ GEM
     pundit (2.5.0)
       activesupport (>= 3.0.0)
     racc (1.8.1)
-    rack (3.1.13)
+    rack (3.0.18)
     rack-mini-profiler (3.3.1)
       rack (>= 1.2.0)
     rack-protection (4.1.1)
@@ -632,6 +632,7 @@ DEPENDENCIES
   pg
   puma
   pundit
+  rack (~> 3.0.0)
   rack-mini-profiler
   rack-timeout (~> 0.7)
   rails (~> 8.0.2)
