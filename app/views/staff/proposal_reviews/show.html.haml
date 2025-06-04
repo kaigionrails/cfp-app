@@ -121,3 +121,10 @@
           .widget-content
             = render partial: 'proposals/comments',
                 locals: { proposal: proposal, comments: proposal.internal_comments }
+      .proposal-section
+        %h2.fieldset-legend Proposals tagged with the same tag as this proposal
+        - same_tag_proposals_per_event.each do |event, proposals|
+          %h3= event.name
+          - proposals.each do |proposal|
+            = link_to event_staff_proposal_path(event_slug: event.slug, uuid: proposal.uuid) do
+              %p= proposal.title
