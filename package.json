@@ -3,8 +3,9 @@
   "private": true,
   "scripts": {
     "build:css:compile": "postcss ./app/assets/stylesheets/application.postcss.css -o ./app/assets/builds/application.css",
+    "build:css:default": "postcss ./app/assets/stylesheets/default.postcss.css -o ./app/assets/builds/default.css",
     "build:css:fonts": "mkdir -p app/assets/builds/fonts && cp node_modules/bootstrap-icons/font/fonts/* app/assets/builds/fonts/",
-    "build:css": "yarn build:css:fonts && yarn build:css:compile",
+    "build:css": "yarn build:css:fonts && yarn build:css:compile && yarn build:css:default",
     "build": "esbuild app/javascript/*.* --bundle --sourcemap --format=esm --outdir=app/assets/builds --public-path=/assets"
   },
   "dependencies": {

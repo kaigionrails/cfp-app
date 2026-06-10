@@ -94,8 +94,10 @@
   width: 40%;
   height: 100%;
   z-index: 10;
-  background-color: var(--white);
-  border: 1px solid var(--black);
+  background-color: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--color-line);
   transition: all 1s;
   overflow: scroll;
 

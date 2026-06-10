@@ -1,27 +1,22 @@
 /*
  * Default theme application styles
- *
- *= require themes/default/colors
- *= require themes/default/shared
- *= require themes/default/nav
- *= require themes/default/footer
- *= require themes/default/program
- *= require themes/default/schedule
- *= require themes/default/sponsors
+ * (bundled via app/assets/stylesheets/default.postcss.css)
  */
 
 :root {
-  --sans-serif-font: 'Rubik';
-  --secondary-body-font: 'Rubik'
+  --sans-serif-font: 'Funnel Display';
+  --secondary-body-font: 'IBM Plex Sans JP';
+  --body-font-stack: var(--secondary-body-font), 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+  --display-font-stack: var(--sans-serif-font), sans-serif;
 }
 
 html {
-  font-family: var(--sans-serif-font), sans-serif !important;
+  font-family: var(--body-font-stack) !important;
 }
 
 @supports (font-variation-settings: normal) {
   html {
-    font-family: var(--sans-serif-font), sans-serif;
+    font-family: var(--body-font-stack);
   }
 }
 
@@ -33,6 +28,17 @@ body {
   overflow: scroll;
 }
 
+/* Fixed full-screen crossing illustration, same as sponsor-app */
+.background {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: url('themes/default/bg-crossing.webp');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+}
+
 .hidden {
   display: none!important;
 }
@@ -41,10 +47,29 @@ header + #content {
   background-color: var(--main_content_background);
   margin-top: 110px;
   min-height: 95vh;
+  padding: 32px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+}
+
+h1, h2, h3 {
+  font-family: var(--display-font-stack);
+}
+
+/* White diagonal-stripe decoration under h2, same as sponsor-app */
+h2::after {
+  content: "";
+  display: block;
+  height: 16px;
+  margin-top: 1.75rem;
+  margin-bottom: 2.5rem;
+  background-image: repeating-linear-gradient(-45deg, var(--white) 0, var(--white) 10px, transparent 10px, transparent 18px);
 }
 
 p {
-  font-family: var(--secondary-body-font);
+  font-family: var(--body-font-stack);
   font-size: 14px;
   line-height: 21px;
   margin-bottom: 20px;
@@ -57,7 +82,11 @@ a {
   display: inline-block;
   transition: all 0.25s ease-in-out;
   text-decoration: underline;
-  color: var(--text);
+  color: var(--link);
+
+  &:hover, &:focus {
+    color: var(--link-hover);
+  }
 }
 
 em {
@@ -71,10 +100,50 @@ ul li {
 
 .btn {
   display: inline-block;
-  padding: 10px 15px;
+  padding: 0.6rem 1.5rem;
   border-radius: 5px;
   text-decoration: none;
   margin: 0 0 12px 0;
+  font-weight: bold;
+}
+
+.btn-primary {
+  background-color: var(--kor-green);
+  border-color: transparent;
+  color: var(--black) !important;
+
+  &:hover, &:focus {
+    background-color: var(--link-hover);
+    border-color: transparent;
+    color: var(--black) !important;
+  }
+}
+
+.btn-default {
+  color: rgba(255, 255, 255, 0.5);
+  background-color: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+
+  &:hover, &:focus {
+    color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.5);
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+}
+
+.form-control {
+  background-color: var(--black);
+  color: var(--white);
+  border-color: rgba(255, 255, 255, 0.3);
+
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.25);
+  }
+
+  &:focus {
+    background-color: var(--white);
+    color: #495057;
+  }
 }
 
 h3.section-title {
@@ -89,7 +158,8 @@ h3.section-title {
   font-size: 32px;
   font-weight: 700;
   line-height: 38px;
-  margin-bottom: 35px
+  margin-bottom: 35px;
+  font-family: var(--display-font-stack);
 }
 
 @media screen and (max-width: 900px) and (orientation: portrait),

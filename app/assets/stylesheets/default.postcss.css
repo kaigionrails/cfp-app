@@ -1,0 +1,10 @@
+/* Entry point for the default theme PostCSS build */
+
+@import "./themes/default/colors.css";
+@import "./themes/default/application.css";
+@import "./themes/default/shared.css";
+@import "./themes/default/nav.css";
+@import "./themes/default/footer.css";
+@import "./themes/default/program.css";
+@import "./themes/default/schedule.css";
+@import "./themes/default/sponsors.css";

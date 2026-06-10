@@ -2,11 +2,15 @@
   .overlay
     .footer-header
       .logo-container
-        = resize_image_tag(current_website.logo, width: 36)
-        .website-info
-          = link_to(current_website.event.name, landing_path(website_event_slug))
-          .city
-            = current_website.city
+        - if current_website.logo.attached?
+          = resize_image_tag(current_website.logo, width: 36)
+          .website-info
+            = link_to(current_website.event.name, landing_path(website_event_slug))
+            .city
+              = current_website.city
+        - else
+          = link_to landing_path(website_event_slug), class: 'header-logo-link' do
+            = image_tag 'themes/default/logo-header.svg', class: 'header-logo', alt: current_website.event.name
     .footer-content
       .footer-event-details
         .location-section

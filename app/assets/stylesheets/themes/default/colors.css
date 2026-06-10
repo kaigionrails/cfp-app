@@ -1,20 +1,39 @@
+/*
+ * Kaigi on Rails 2026 palette
+ * Aligned with sponsor-app's design (kaigionrails/sponsor-app PR #61-63)
+ */
 :root {
-  --beige: #F4EEE6;
   --black: #000000;
+  --white: #FFFFFF;
+
+  /* KoR 2026 brand colors */
+  --kor-green: #ceff05;
+  --kor-pink: #ff2e9b;
+  --kor-red: #eb0064;
+  --kor-yellow: #ffff66;
+  --kor-navy: oklch(26% 0.0100 39.33);
+
+  /* Derived dark-theme tones */
+  --color-line: rgba(255, 255, 255, 0.4);
+  --color-bg-card: rgba(0, 0, 0, 0.4);
+  --color-bg-panel: rgba(0, 0, 0, 0.55);
+  --color-text-muted: rgba(255, 255, 255, 0.7);
+
+  --beige: rgba(255, 255, 255, 0.12);
   --blue: #3444DA;
   --blue-dark: #417D7A;
   --blue-light: #A1E3D8;
-  --divider: #E0D2C7;
-  --divider-light: #EBEBEB;
+  --divider: rgba(255, 255, 255, 0.4);
+  --divider-light: rgba(255, 255, 255, 0.25);
   --bronze: #B77D39;
   --brown: #5A5655;
   --gold: #FFB62C;
-  --green: #829757;
+  --green: var(--kor-green);
   --green-dark: #417D7A;
   --grey: #494644;
-  --grey-light: #C4C4C4;
-  --grey-lighter: #F5F5F5;
-  --grey-lightest: #E7E7E7;
+  --grey-light: rgba(255, 255, 255, 0.35);
+  --grey-lighter: rgba(255, 255, 255, 0.08);
+  --grey-lightest: rgba(255, 255, 255, 0.2);
   --grey-secondary: #E6E6E6;
   --orange: #FFBC90;
   --orange-burnt: #EA652C;
@@ -23,30 +42,33 @@
   --pastel-peach: #FFBC80;
   --pastel-blue-light: #A1E3D8;
   --pastel-blue:  #3444DA;
-  --pink: #FF88ab;
+  --pink: var(--kor-pink);
   --platinum: #C7D7D7;
   --purple: #7445C0;
-  --red: #C04F45;
-  --red-dark: #E14943;
-  --red-light: #E14943;
+  --red: var(--kor-red);
+  --red-dark: var(--kor-red);
+  --red-light: var(--kor-pink);
   --silver: #E0E0E0;
-  --silver-border: #EBEBEB;
-  --sponsor-tag: #F8B400;
+  --silver-border: rgba(255, 255, 255, 0.2);
+  --sponsor-tag: var(--kor-green);
   --teal: #48c892;
-  --text: var(--grey);
-  --text-secondary: #5E5E5E;
-  --yellow: #FFD801;
-  --white: #FFFFFF;
+  --text: var(--white);
+  --text-secondary: var(--color-text-muted);
+  --yellow: var(--kor-yellow);
 
   /* Layout */
-  --body_background_color: var(--white);
-  --nav_background_color: var(--black);
+  --body_background_color: var(--black);
+  --nav_background_color: rgba(0, 0, 0, 0.6);
   --nav_text_color: var(--white);
-  --nav_link_hover: var(--white);
-  --main_content_background: var(--white);
+  --nav_link_hover: var(--kor-green);
+  --main_content_background: transparent;
+
+  /* Links */
+  --link: var(--kor-green);
+  --link-hover: #a5cc04;
 
   /* Session Formats */
-  --session-format-tag-1: var(--pastel-pink);
+  --session-format-tag-1: var(--kor-pink);
   --session-format-tag-2: var(--pastel-purple);
   --session-format-tag-3: var(--pastel-peach);
   --session-format-tag-4: var(--pastel-blue-light);

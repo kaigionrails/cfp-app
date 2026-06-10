@@ -1,12 +1,19 @@
 footer {
-  color: white;
+  color: var(--white);
   position: relative;
   z-index: 11;
-  background-color: black;
+
+  a {
+    color: var(--white);
+    &:hover, &:focus {
+      color: var(--nav_link_hover);
+    }
+  }
 
   .overlay {
-    background-color: black;
-    opacity: 0.9;
+    background-color: var(--nav_background_color);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     padding: 20px 30px 35px;
   }
   .footer-header {
@@ -14,12 +21,21 @@ footer {
       display: flex;
       align-items: center;
       margin-bottom:  20px;
+      .header-logo {
+        height: 40px;
+        width: auto;
+      }
       .website-info {
         margin-left: 10px;
         a {
           text-decoration: none;
           font-weight: 700;
           font-size: 18px;
+          font-family: var(--display-font-stack);
+        }
+        .city {
+          color: var(--color-text-muted);
+          font-size: 12px;
         }
       }
     }
@@ -30,7 +46,7 @@ footer {
     width: 100%;
     grid-template-columns: 1fr 1fr;
     gap: 40px;
-    border-bottom: 1px solid white;
+    border-bottom: 1px solid var(--color-line);
     @media screen and (max-width: 900px) and (orientation: portrait),
       (max-width: 823px) and (orientation: landscape) {
       grid-template-columns: 1fr;
@@ -53,12 +69,15 @@ footer {
           }
         }
         .register-button {
-          color: #E14943;
-          background-color: white;
+          color: var(--black);
+          background-color: var(--kor-green);
+          font-weight: bold;
+          text-decoration: none;
           padding: 10px 20px;
           border-radius: 4px;
-          &:hover {
-            transform: translateX(2px) translateY(-2px);
+          &:hover, &:focus {
+            color: var(--black);
+            background-color: var(--link-hover);
           }
         }
       }

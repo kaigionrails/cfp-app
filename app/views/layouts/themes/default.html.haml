@@ -20,8 +20,11 @@
     %meta{property: "twitter:description", content: current_website.description}
     %meta{property: "twitter:image", content: current_website.meta_image_url}
 
-    = stylesheet_link_tag current_website.theme, media: 'all'
+    %link{rel: "preconnect", href: "https://fonts.googleapis.com"}
+    %link{rel: "preconnect", href: "https://fonts.gstatic.com", crossorigin: true}
+    %link{rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&family=IBM+Plex+Sans+JP:wght@100;200;300;400;500;600;700&display=swap"}
     = stylesheet_link_tag 'application', media: 'all'
+    = stylesheet_link_tag current_website.theme, media: 'all'
     = javascript_include_tag 'application', 'data-turbo-track': 'reload', type: 'module'
     :css
       #{current_website.font_faces_css}
@@ -29,6 +32,7 @@
     = current_website.head_content
 
   %body
+    .background
     - unless @page&.hide_header?
       = render 'layouts/themes/default/header'
 
