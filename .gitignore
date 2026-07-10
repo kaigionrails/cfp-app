@@ -53,8 +53,5 @@
 
 /config/credentials/test.key
 
-# auto generate file
-deploy/apprunner.json
-
 # Ignore Heroku DB dump files.
 latest.dump*
