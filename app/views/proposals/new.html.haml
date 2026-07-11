@@ -20,7 +20,7 @@
               %p= raw t("proposal.new.instruction", guideline: link_to(t("proposal.new.guidelines"), event_path(event.slug)))
               %p= t("proposal.new.gfm_html")
 
-              = simple_form_for proposal, url: event_proposals_path(event), html: {'data-proposal-preview-target' => 'form'} do |f|
+              = simple_form_for proposal, url: event_proposals_path(event), html: {data: {proposal_preview_target: 'form', controller: 'disable-submit', action: 'submit->disable-submit#disable'}} do |f|
                 = render partial: 'form', locals: {f: f}
         #preview.tab-pane
           = render partial: 'preview', locals: { proposal: proposal }
