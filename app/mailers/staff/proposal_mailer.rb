@@ -4,7 +4,9 @@ class Staff::ProposalMailer < ApplicationMailer
   attr_accessor :test_mode
 
   def send_email(proposal)
-    if proposal.accepted?
+    if proposal.submitted?
+      submitted_email(proposal.event, proposal)
+    elsif proposal.accepted?
       accept_email(proposal.event, proposal)
     elsif proposal.rejected?
       reject_email(proposal.event, proposal)
@@ -22,6 +24,14 @@ class Staff::ProposalMailer < ApplicationMailer
     dummy_proposal.speakers << dummy_speaker
 
     send_email(dummy_proposal)
+  end
+
+  def submitted_email(event, proposal)
+    @proposal      = proposal.decorate
+    @event         = event
+    @template_name = 'submitted_email'
+    subject        = subject_for(proposal: @proposal, type: :submitted)
+    mail_to_speakers(event, proposal, subject)
   end
 
   def accept_email(event, proposal)

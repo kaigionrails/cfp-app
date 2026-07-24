@@ -2,6 +2,7 @@
 
 module FinalizationMessages
   MESSAGES = {
+    submitted: ->(event_name) { "For all those who submitted proposal(s) for #{event_name}" },
     accepted: ->(event_name) { "Your proposal for #{event_name} has been accepted" },
     rejected: ->(event_name) { "Your proposal for #{event_name} has not been accepted" },
     waitlisted: ->(event_name) { "Your proposal for #{event_name} has been added to the waitlist" }
