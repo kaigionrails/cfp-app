@@ -4,6 +4,8 @@
     - if policy(@event).update?
       = link_to 'Test', '#', class: 'btn btn-sm btn-primary', data: {bs_toggle: 'modal', bs_target: "#test-template-#{type_key}-dialog"}
       = link_to 'Edit', edit_event_staff_speaker_email_template_path(@event, type_key), class: 'btn btn-sm btn-primary'
+      = link_to 'Send', deliver_event_staff_speaker_email_template_path(@event, type_key), class: 'btn btn-sm btn-success',
+        data: {turbo: true, turbo_method: :post, turbo_confirm: "This will send the '#{type_text}' email for #{proposal_count} #{"proposal".pluralize(proposal_count)}. Proceed?"}
   .template-content
     - if text.blank?
       %p.notice Using default template.

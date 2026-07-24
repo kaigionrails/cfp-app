@@ -52,6 +52,7 @@ Rails.application.routes.draw do
       resources :speaker_email_templates, only: [:index, :show, :edit, :update, :destroy] do
         member do
           post :test
+          post :deliver
         end
       end
 

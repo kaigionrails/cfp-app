@@ -1,0 +1,10 @@
+<% if @event.all.present? %>
+  <%= Staff::ProposalMailerTemplate.new(@event.all, @event, @proposal).render %>
+<% else %>
+Thank you for submitting <%= @proposal.title %> to <%= @event.name %>.
+
+We received your proposal and will contact you when the program selection is complete.
+
+The <%= @event.name %> Program Committee
+
+<% end %>
