@@ -28,6 +28,7 @@ class Staff::ProposalsController < Staff::ApplicationController
     @speakers = @proposal.speakers.decorate
     @rating = current_user.rating_for(@proposal)
     @mention_names = current_event.mention_names
+    @same_review_tag_proposals_per_event = @proposal.same_review_tag_proposals_per_event
   end
 
   def update_state

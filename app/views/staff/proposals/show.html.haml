@@ -89,3 +89,4 @@
       .widget-header
         %h3 Review
       = render partial: 'shared/proposals/rating_widget', locals: { event: event, proposal: proposal, rating: @rating }
+    = render 'shared/proposals/same_tag_proposals', same_review_tag_proposals_per_event: @same_review_tag_proposals_per_event
