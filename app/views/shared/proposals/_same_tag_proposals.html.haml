@@ -1,0 +1,7 @@
+.proposal-section
+  %h2.fieldset-legend.mb-0 Proposals tagged with the same tag as this proposal
+  - same_review_tag_proposals_per_event.each do |event, proposals|
+    %h3.fieldset-legend.mt-0= event.name
+    - proposals.each do |proposal|
+      = link_to event_staff_proposal_path(event_slug: event.slug, uuid: proposal.uuid) do
+        %p= proposal.title
