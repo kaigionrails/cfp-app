@@ -25,6 +25,7 @@ class Event < ApplicationRecord
   serialize :settings, type: Hash, coder: YAML
   serialize :speaker_notification_emails, type: Hash, coder: YAML
 
+  store_accessor :speaker_notification_emails, :all
   store_accessor :speaker_notification_emails, :accept
   store_accessor :speaker_notification_emails, :reject
   store_accessor :speaker_notification_emails, :waitlist

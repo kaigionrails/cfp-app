@@ -100,10 +100,27 @@ describe Staff::ProposalMailer do
       Staff::ProposalMailer.send_email(proposal).deliver_now
       expect(ActionMailer::Base.deliveries.last.subject).to eq("Your proposal for #{event} has been added to the waitlist")
     end
+
+    it "can send the All template regardless of proposal state" do
+      event.update!(all: "An update about ::proposal_title::.")
+      proposal.state = :accepted
+
+      Staff::ProposalMailer.send_email(proposal, type: :all).deliver_now
+
+      mail = ActionMailer::Base.deliveries.last
+      expect(mail.subject).to eq("For all those who submitted proposal(s) for #{event}")
+      expect(mail.html_part.body.to_s).to eq("<p>An update about #{proposal.title}.</p>\n")
+    end
   end
 
   describe "send_test_email" do
     it "sends a test email to the given address using the specified template" do
+      Staff::ProposalMailer.send_test_email('test@a.mail', 'all', event).deliver_now
+      mail = ActionMailer::Base.deliveries.last
+      expect(mail.subject).to eq("For all those who submitted proposal(s) for #{event}")
+      expect(mail.to[0]).to eq('test@a.mail')
+      expect(mail.bcc).to be_empty
+
       Staff::ProposalMailer.send_test_email('test@e.mail', 'accept', event).deliver_now
       mail = ActionMailer::Base.deliveries.last
       expect(mail.subject).to eq("Your proposal for #{event} has been accepted")

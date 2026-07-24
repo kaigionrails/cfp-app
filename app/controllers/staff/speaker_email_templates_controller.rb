@@ -1,8 +1,8 @@
 class Staff::SpeakerEmailTemplatesController < Staff::ApplicationController
   before_action :enable_staff_event_subnav
-  before_action :set_type_key, only: [:show, :edit, :update, :destroy, :test]
+  before_action :set_type_key, only: [:show, :edit, :update, :destroy, :test, :deliver]
 
-  helper_method :sticky_template_test_email
+  helper_method :sticky_template_test_email, :proposal_count_for
 
   def index
     @event.initialize_speaker_emails
@@ -47,6 +47,20 @@ class Staff::SpeakerEmailTemplatesController < Staff::ApplicationController
     redirect_to event_staff_speaker_email_templates_path(@event)
   end
 
+  def deliver
+    authorize @event, :update?
+
+    proposals = proposals_for(@type_key)
+    proposal_count = proposals.count
+
+    proposals.find_each do |proposal|
+      Staff::ProposalMailer.send_email(proposal, type: @type_key).deliver_later
+    end
+
+    flash[:info] = "'#{@type_text}' email queued for #{proposal_count} #{"proposal".pluralize(proposal_count)}."
+    redirect_to event_staff_speaker_email_templates_path(@event)
+  end
+
   private
 
   def set_type_key
@@ -56,6 +70,17 @@ class Staff::SpeakerEmailTemplatesController < Staff::ApplicationController
     end
     @type_text = SpeakerEmailTemplate::DISPLAY_TYPES[@type_key]
     @text = @event.speaker_notification_emails[@type_key]
+    @proposal_count = proposal_count_for(@type_key)
+  end
+
+  def proposals_for(type_key)
+    return @event.proposals if type_key == :all
+
+    @event.proposals.where(state: SpeakerEmailTemplate::TYPES_TO_STATES.fetch(type_key))
+  end
+
+  def proposal_count_for(type_key)
+    proposals_for(type_key).count
   end
 
   def sticky_template_test_email
