@@ -245,6 +245,20 @@ class Proposal < ApplicationRecord
     review_taggings.to_a.map(&:tag)
   end
 
+  # Proposals across all events sharing at least one review tag with this
+  # proposal, grouped by event ordered newest first. Sorted in Ruby because
+  # ORDER BY events.id is incompatible with SELECT DISTINCT on proposals.*.
+  def same_review_tag_proposals_per_event
+    Proposal.joins(:review_taggings).preload(:event)
+      .where(review_taggings: { tag: review_tags })
+      .where.not(id: id)
+      .distinct
+      .group_by(&:event)
+      .sort_by { |event, _| event.id }
+      .reverse
+      .to_h
+  end
+
   def has_reviewer_comments?
     has_public_reviewer_comments? || has_internal_reviewer_comments?
   end

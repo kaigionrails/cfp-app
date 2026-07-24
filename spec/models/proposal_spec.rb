@@ -526,4 +526,51 @@ describe Proposal do
       expect(proposal).to_not have_reviewer_comments
     end
   end
+
+  describe "#same_review_tag_proposals_per_event" do
+    def create_reviewed_proposal(event, review_tags)
+      proposal = create(:proposal, event: event)
+      proposal.review_tags = review_tags
+      proposal.save
+      proposal.reload
+    end
+
+    let(:older_event) { create(:event) }
+    let(:newer_event) { create(:event) }
+    let(:proposal) { create_reviewed_proposal(older_event, ['performance']) }
+
+    it "groups matching proposals by event with newest event first" do
+      older_match = create_reviewed_proposal(older_event, ['performance'])
+      newer_match = create_reviewed_proposal(newer_event, ['performance'])
+
+      expect(proposal.same_review_tag_proposals_per_event)
+        .to eq(newer_event => [newer_match], older_event => [older_match])
+      expect(proposal.same_review_tag_proposals_per_event.keys).to eq([newer_event, older_event])
+    end
+
+    it "does not include the proposal itself" do
+      other = create_reviewed_proposal(older_event, ['performance'])
+
+      expect(proposal.same_review_tag_proposals_per_event.values.flatten).to eq([other])
+    end
+
+    it "returns each proposal once when multiple review tags match, ignoring proposal tags" do
+      proposal.review_tags = ['performance', 'database']
+      proposal.save
+      proposal.reload
+      multi_tag_match = create_reviewed_proposal(older_event, ['performance', 'database'])
+      proposal_tag_only = create(:proposal, event: older_event)
+      proposal_tag_only.tags = ['performance']
+      proposal_tag_only.save
+
+      expect(proposal.same_review_tag_proposals_per_event).to eq(older_event => [multi_tag_match])
+    end
+
+    it "returns an empty hash when the proposal has no review tags" do
+      create_reviewed_proposal(older_event, ['performance'])
+      untagged = create(:proposal, event: older_event)
+
+      expect(untagged.same_review_tag_proposals_per_event).to eq({})
+    end
+  end
 end
