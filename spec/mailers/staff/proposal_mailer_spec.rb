@@ -12,12 +12,11 @@ describe Staff::ProposalMailer do
   describe "accept_email" do
     let(:mail) { Staff::ProposalMailer.accept_email(event, proposal) }
 
-    it "emails to all speakers including contact_mail" do
+    it "emails to all speakers not including contact_mail" do
       proposal.speakers = build_list(:speaker, 3)
       proposal.save!
       expect(mail.to.count).to eq(3)
-      bcc_emails = event.contact_email
-      expect(mail.bcc).to match_array(bcc_emails)
+      expect(mail.bcc).to be_nil
     end
 
     it "uses event's accept template" do
@@ -41,12 +40,11 @@ describe Staff::ProposalMailer do
   describe "reject_email" do
     let(:mail) { Staff::ProposalMailer.reject_email(event, proposal) }
 
-    it "bccs to all speakers including contact_mail" do
+    it "emails to all speakers not including contact_mail" do
       proposal.speakers = build_list(:speaker, 3)
       proposal.save!
       expect(mail.to.count).to eq(3)
-      bcc_emails = event.contact_email
-      expect(mail.bcc).to match_array(bcc_emails)
+      expect(mail.bcc).to be_nil
     end
 
     it "uses event's reject template" do
@@ -65,12 +63,11 @@ describe Staff::ProposalMailer do
   describe "waitlist_email" do
     let(:mail) { Staff::ProposalMailer.waitlist_email(event, proposal) }
 
-    it "bccs to all speakers including contact_mail" do
+    it "emails to all speakers not including contact_mail" do
       proposal.speakers = build_list(:speaker, 3)
       proposal.save!
       expect(mail.to.count).to eq(3)
-      bcc_emails = event.contact_email
-      expect(mail.bcc).to match_array(bcc_emails)
+      expect(mail.bcc).to be_nil
     end
 
     it "uses event's waitlist template" do
@@ -108,19 +105,19 @@ describe Staff::ProposalMailer do
       mail = ActionMailer::Base.deliveries.last
       expect(mail.subject).to eq("Your proposal for #{event} has been accepted")
       expect(mail.to[0]).to eq('test@e.mail')
-      expect(mail.bcc).to be_empty
+      expect(mail.bcc).to be_nil
 
       Staff::ProposalMailer.send_test_email('test@b.mail', 'reject', event).deliver_now
       mail = ActionMailer::Base.deliveries.last
       expect(mail.subject).to eq("Your proposal for #{event} has not been accepted")
       expect(mail.to[0]).to eq('test@b.mail')
-      expect(mail.bcc).to be_empty
+      expect(mail.bcc).to be_nil
 
       Staff::ProposalMailer.send_test_email('test@g.mail', 'waitlist', event).deliver_now
       mail = ActionMailer::Base.deliveries.last
       expect(mail.subject).to eq("Your proposal for #{event} has been added to the waitlist")
       expect(mail.to[0]).to eq('test@g.mail')
-      expect(mail.bcc).to be_empty
+      expect(mail.bcc).to be_nil
     end
   end
 end
