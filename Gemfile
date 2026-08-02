@@ -51,6 +51,8 @@ gem 'paper_trail'
 
 gem 'sendgrid-ruby'
 
+gem 'redis'
+
 # Deploy this application anywhere as a Docker container [https://kamal-deploy.org]
 gem 'kamal', require: false
 

@@ -397,6 +397,10 @@ GEM
       rbs (>= 4.0.0)
       tsort
     redcarpet (3.6.1)
+    redis (6.0.0)
+      redis-client (= 0.30.1)
+    redis-client (0.30.1)
+      connection_pool
     regexp_parser (2.7.0)
     reline (0.6.3)
       io-console (~> 0.5)
@@ -538,6 +542,7 @@ DEPENDENCIES
   rails (~> 8.1.3)
   rails-i18n (~> 8.0)
   redcarpet (~> 3.6)
+  redis
   rexml
   rspec
   rspec-rails
