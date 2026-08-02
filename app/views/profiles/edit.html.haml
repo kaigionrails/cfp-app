@@ -21,10 +21,14 @@
           = f.input :bio, as: :text, input_html: {rows: 7, maxlength: 500, placeholder: 'Enter your bio'}, hint: 'Bio is limited to 500 characters.'
           .form-group
             = f.label :github_account, 'GitHub Account'
-            = f.text_field :github_account, class: 'form-control', placeholder: 'Your GitHub account name', autofocus: true
+            .input-group
+              %span.input-group-text @
+              = f.text_field :github_account, class: 'form-control', placeholder: 'Your GitHub account name'
           .form-group
             = f.label :twitter_account
-            = f.text_field :twitter_account, class: 'form-control', placeholder: 'Your Twitter account name', autofocus: true
+            .input-group
+              %span.input-group-text @
+              = f.text_field :twitter_account, class: 'form-control', placeholder: 'Your Twitter account name'
           .mt-3
             %button.float-end.btn.btn-success{type: 'submit'} Save
 
