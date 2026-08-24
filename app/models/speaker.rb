@@ -33,6 +33,27 @@ class Speaker < ApplicationRecord
   def github_account
     user&.github_account
   end
+
+  def latest_bio
+    user_bio_newer? ? user.bio : bio
+  end
+
+  def latest_bio_source
+    user_bio_newer? ? "user" : "speaker"
+  end
+
+  private
+
+  # The speaker bio is copied from the user profile when the program session
+  # is created, so the user profile may hold a newer bio if it was edited
+  # afterwards. updated_at is the only signal available to tell which side
+  # is newer.
+  def user_bio_newer?
+    return false if user.nil?
+    return false if bio.to_s == user.bio.to_s
+
+    user.updated_at > updated_at
+  end
 end
 
 # == Schema Information
