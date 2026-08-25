@@ -113,8 +113,16 @@ RSpec.configure do |config|
   end
 
   config.after type: :system, js: true do
-    # Force a fresh browser session for each test to prevent state bleeding
-    Capybara.send(:session_pool).delete_if { |k, _v| k.include?('headless_chrome') }
+    # Force a fresh browser session for each test to prevent state bleeding.
+    # Quit the session before dropping it from the pool; otherwise the
+    # browser process is orphaned and keeps running until the suite exits,
+    # eventually exhausting memory (one Chrome per js example).
+    Capybara.send(:session_pool).delete_if do |key, session|
+      next false unless key.include?('headless_chrome')
+
+      session.quit
+      true
+    end
   end
 
   Capybara.disable_animation = true
