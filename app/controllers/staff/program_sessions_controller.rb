@@ -13,7 +13,11 @@ class Staff::ProgramSessionsController < Staff::ApplicationController
 
     respond_to do |format|
       format.html { render }
-      format.json { render_json(current_event.program_sessions.live, filename: json_filename)}
+      format.json do
+        live_sessions = current_event.program_sessions.live
+          .includes(:session_format, :track, :proposal, speakers: :user)
+        render_json(live_sessions, filename: json_filename)
+      end
     end
   end
 
