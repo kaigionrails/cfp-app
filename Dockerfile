@@ -1,4 +1,4 @@
-FROM public.ecr.aws/docker/library/ruby:4.0.6-slim-bookworm as builder
+FROM ghcr.io/sorah-rbpkg/ruby:4.0.9-dev-bookworm as builder
 WORKDIR /app
 
 RUN apt-get update \
