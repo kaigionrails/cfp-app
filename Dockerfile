@@ -1,4 +1,4 @@
-FROM ghcr.io/sorah-rbpkg/ruby:4.0.9-dev-bookworm as builder
+FROM mirror.gcr.io/library/ruby:4.0.9-bookworm as builder
 WORKDIR /app
 
 RUN apt-get update \
