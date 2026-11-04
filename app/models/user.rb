@@ -1,20 +1,22 @@
 class User < ApplicationRecord
   normalizes :email, with: ->(e) { e.strip.downcase }
 
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable
-  devise :database_authenticatable, :registerable,
-         :rememberable, :trackable, :confirmable #:validatable,
-
   has_secure_password
 
-  # Map password_digest to encrypted_password for has_secure_password compatibility
-  undef_method :password_digest
-  alias_attribute :password_digest, :encrypted_password
-  def password_digest
-    encrypted_password
+  PASSWORD_LENGTH = 6..128
+
+  generates_token_for :email_confirmation, expires_in: 3.days do
+    unconfirmed_email || email
   end
 
+  before_update :postpone_email_change, if: :postpone_email_change?
+  # Distinct method names are load-bearing: after_*_commit callbacks share
+  # one :commit chain deduped by [kind, filter], so two declarations with
+  # the same symbol silently merge and drop the first one's conditions.
+  after_create_commit :send_creation_confirmation_instructions, if: -> { !confirmed? && email.present? }
+  after_update_commit :send_reconfirmation_instructions, if: -> { saved_change_to_unconfirmed_email? && unconfirmed_email.present? }
+
+  has_many :sessions,     dependent: :destroy
   has_many :identities,   dependent: :destroy
   has_many :invitations,  dependent: :destroy
   has_many :teammates, dependent: :destroy
@@ -32,12 +34,12 @@ class User < ApplicationRecord
   validates :bio, length: { maximum: 500 }
   validates :name, presence: true, allow_nil: true
   validates_uniqueness_of :email, allow_blank: true
-  validates_format_of :email, with: /\A[^@\s]+@[^@\s]+\z/, allow_blank: true, if: :email_changed?  # equivalent to Devise.email_regexp
+  validates_format_of :email, with: /\A[^@\s]+@[^@\s]+\z/, allow_blank: true, if: :email_changed?  # permissive anything@anything format (inherited from the Devise era)
   validates_presence_of :email, on: :create, if: -> { provider.blank? && identities.blank? }
-  validates_presence_of :email, on: :update, if: -> { provider.blank? || unconfirmed_email.blank? }
+  validates_presence_of :email, on: :update, if: -> { (provider.blank? && identities.blank?) || unconfirmed_email.blank? }
   validates_presence_of :password, on: :create
   validates_confirmation_of :password, on: :create
-  validates_length_of :password, within: 6..128, allow_blank: true
+  validates_length_of :password, within: PASSWORD_LENGTH, allow_blank: true
 
   before_create :check_pending_invite_email
 
@@ -84,6 +86,51 @@ class User < ApplicationRecord
     if pending_invite_email.present? && pending_invite_email == email
       self.confirmed_at = Time.current
     end
+  end
+
+  # Hand-rolled replacement for Devise :confirmable, using a stateless
+  # generates_token_for token instead of a stored confirmation_token column.
+  def email_confirmation_token
+    generate_token_for(:email_confirmation)
+  end
+
+  def self.find_by_email_confirmation_token(token)
+    find_by_token_for(:email_confirmation, token)
+  end
+
+  def confirmed?
+    confirmed_at.present?
+  end
+
+  def confirm!
+    @skip_email_change_postpone = true
+    promoting_pending_email = unconfirmed_email.present?
+    if promoting_pending_email
+      self.email = unconfirmed_email
+      self.unconfirmed_email = nil
+    end
+    self.confirmed_at ||= Time.current
+    # Mirrors Devise confirmable: validate only when promoting a pending
+    # email (uniqueness must hold); plain confirmation must succeed even for
+    # users who fail validation (e.g. OAuth users with a blank email).
+    save!(validate: promoting_pending_email)
+  ensure
+    @skip_email_change_postpone = nil
+  end
+
+  def send_confirmation_instructions
+    ConfirmationsMailer.confirmation_instructions(self).deliver_later
+  end
+
+  # Devise confirmable equivalent: let an email change apply immediately on
+  # the next save, bypassing the postpone-to-unconfirmed_email dance (used by
+  # admin user edits, which should not require the admin's own reconfirmation).
+  # Request-scoped by design: the flag is sticky on this in-memory instance
+  # until it's discarded at the end of the request, which matches its single
+  # call site (Admin::UsersController#update, called once per request on a
+  # freshly loaded record).
+  def skip_reconfirmation!
+    @skip_email_change_postpone = true
   end
 
   def pending_invitations
@@ -188,10 +235,35 @@ class User < ApplicationRecord
       other_user.ratings.update_all(user_id: id)
       other_user.comments.update_all(user_id: id)
       other_user.notifications.update_all(user_id: id)
+      other_user.sessions.destroy_all
 
       # Clear legacy OAuth fields so the old user can't be found via from_omniauth
       other_user.update_columns(provider: nil, uid: nil)
     end
+  end
+
+  private
+
+  def send_creation_confirmation_instructions
+    send_confirmation_instructions
+  end
+
+  def send_reconfirmation_instructions
+    send_confirmation_instructions
+  end
+
+  # Devise reconfirmable equivalent: every persisted change to a present
+  # email (confirmed or not, including an OAuth user's first email) is
+  # written to unconfirmed_email and applied by confirm! instead. Mirrors
+  # Devise's own postpone_email_change?, which has no confirmed?/blank-email
+  # guards.
+  def postpone_email_change?
+    will_save_change_to_email? && email.present? && !@skip_email_change_postpone
+  end
+
+  def postpone_email_change
+    self.unconfirmed_email = email
+    self.email = email_in_database
   end
 end
 
@@ -199,35 +271,23 @@ end
 #
 # Table name: users
 #
-#  id                     :integer          not null, primary key
-#  name                   :string
-#  email                  :string           default(""), not null
-#  bio                    :text
-#  admin                  :boolean          default(FALSE)
-#  provider               :string
-#  uid                    :string
-#  encrypted_password     :string           default(""), not null
-#  reset_password_token   :string
-#  reset_password_sent_at :datetime
-#  sign_in_count          :integer          default(0), not null
-#  current_sign_in_at     :datetime
-#  current_sign_in_ip     :inet
-#  last_sign_in_at        :datetime
-#  last_sign_in_ip        :inet
-#  confirmation_token     :string
-#  confirmed_at           :datetime
-#  confirmation_sent_at   :datetime
-#  unconfirmed_email      :string
-#  remember_created_at    :datetime
-#  created_at             :datetime
-#  updated_at             :datetime
-#  github_account         :string
-#  twitter_account        :string
+#  id                :integer          not null, primary key
+#  name              :string
+#  email             :string           default(""), not null
+#  bio               :text
+#  admin             :boolean          default(FALSE)
+#  provider          :string
+#  uid               :string
+#  password_digest   :string           default(""), not null
+#  confirmed_at      :datetime
+#  unconfirmed_email :string
+#  created_at        :datetime
+#  updated_at        :datetime
+#  github_account    :string
+#  twitter_account   :string
 #
 # Indexes
 #
-#  index_users_on_confirmation_token    (confirmation_token)
-#  index_users_on_email                 (email)
-#  index_users_on_reset_password_token  (reset_password_token)
-#  index_users_on_uid                   (uid)
+#  index_users_on_email  (email)
+#  index_users_on_uid    (uid)
 #

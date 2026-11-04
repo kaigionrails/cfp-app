@@ -6,28 +6,31 @@ class PasswordsController < ApplicationController
   rate_limit to: 10, within: 3.minutes, only: :create, with: -> { redirect_to new_password_path, alert: "Try again later." }
 
   def new
-    render 'devise/passwords/new'
   end
 
   def create
     if (user = User.find_by(email: params[:user][:email]))
       PasswordsMailer.reset(user).deliver_later
 
-      redirect_to new_user_session_path, notice: 'Password reset instructions sent (if user with that email address exists).'
+      redirect_to new_session_path, notice: 'Password reset instructions sent (if user with that email address exists).'
     else
-      @user = User.new.tap { it.errors.add(:email, :not_found) }
+      @user = User.new.tap { it.errors.add(:email, :not_found, message: 'not found') }
 
-      render 'devise/passwords/new'
+      render :new, status: :unprocessable_entity
     end
   end
 
   def edit
-    render 'devise/passwords/edit'
+    @minimum_password_length = User::PASSWORD_LENGTH.min
   end
 
   def update
     if @user.update(params.require(:user).permit(:password, :password_confirmation))
-      redirect_to new_user_session_path, notice: 'Password has been reset.'
+      # A password reset must invalidate every live session (Devise did this
+      # implicitly via authenticatable_salt checks; the new stack doesn't).
+      @user.sessions.destroy_all
+
+      redirect_to new_session_path, notice: 'Password has been reset.'
     else
       redirect_to edit_password_path(params[:token]), alert: "Passwords did not match."
     end

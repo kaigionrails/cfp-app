@@ -5,9 +5,10 @@ source 'https://rubygems.org'
 ruby file: '.ruby-version'
 
 gem 'puma'
-gem 'rails', '~> 8.1.3'
+gem 'rails', '~> 8.1.4'
 gem 'turbo-rails'
 gem 'solid_queue'
+gem 'mission_control-jobs'
 
 gem 'rexml'
 gem "sentry-ruby"
@@ -17,7 +18,7 @@ gem 'propshaft'
 gem 'jsbundling-rails'
 gem 'cssbundling-rails'
 
-gem 'honeybadger', '~> 6.9'
+gem 'honeybadger', '~> 6.10'
 
 gem 'csv'
 
@@ -25,7 +26,6 @@ gem 'pg'
 
 gem 'haml-rails'
 
-gem 'devise', '~> 4.9'
 gem 'omniauth-github'
 gem 'omniauth-twitter'
 gem "omniauth-rails_csrf_protection", "~> 2.0"
@@ -34,7 +34,7 @@ gem 'stateful_enum'
 
 gem 'actionview-encoded_mail_to'
 gem 'active_model_serializers', '~> 0.10.16'
-gem 'bootsnap', '~> 1.24', require: false
+gem 'bootsnap', '~> 1.26', require: false
 gem 'chartkick'
 gem 'draper', '~> 4.0'
 gem 'fastly'
@@ -44,7 +44,7 @@ gem 'pundit'
 gem 'redcarpet', '~> 3.6'
 gem 'simple_form'
 gem 'rails-i18n', '~> 8.0'
-gem 'image_processing', '~> 2.0'
+gem 'image_processing', '~> 2.2'
 
 gem 'diffy'
 gem 'paper_trail'
@@ -81,6 +81,7 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'debug'
   gem 'faker'
+  gem 'letter_opener_web'
 end
 
 gem "bcrypt", "~> 3.1"
