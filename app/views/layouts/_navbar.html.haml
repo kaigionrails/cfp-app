@@ -59,6 +59,15 @@
                   = link_to admin_events_path, class: "dropdown-item #{'active' if request.path == admin_events_path}" do
                     %i.bi.bi-calendar
                     %span Events
+                %li
+                  = link_to mission_control_jobs_path, class: 'dropdown-item' do
+                    %i.bi.bi-list-task
+                    %span Jobs
+                - if Rails.env.local?
+                  %li
+                    = link_to letter_opener_web_path, class: 'dropdown-item' do
+                      %i.bi.bi-envelope
+                      %span letter_opener
 
           %li.nav-item.dropdown{class: nav_item_class(:notifications)}
             - unread_notifications = current_user.notifications.recent_unread.records
@@ -100,13 +109,13 @@
                     %i.bi.bi-bell-fill
                     %span Notifications
               %li
-                = link_to destroy_user_session_path, data: {turbo: true, turbo_method: :delete}, class: 'dropdown-item' do
+                = link_to session_path, data: {turbo: true, turbo_method: :delete}, class: 'dropdown-item' do
                   %i.bi.bi-box-arrow-right
                   %span Sign Out
 
       - else
         %ul.navbar-nav.ms-auto
-          %li.nav-item= link_to "Log in", new_user_session_path, class: 'nav-link'
+          %li.nav-item= link_to "Log in", new_session_path, class: 'nav-link'
 
 - if display_staff_event_subnav?
   = render partial: "layouts/nav/staff/event_subnav"

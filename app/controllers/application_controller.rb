@@ -1,5 +1,11 @@
 class ApplicationController < ActionController::Base
   include Pundit::Authorization
+  include Authentication
+  # Authorization is opt-in per controller (require_user etc.); most pages are public.
+  # Because this always skips require_authentication, the Authentication concern's
+  # request_authentication/after_authentication_url are dead paths app-wide —
+  # don't wire require_user (or anything else) to them.
+  allow_unauthenticated_access(if: -> { true })
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
   # Prevent CSRF attacks by raising an exception.
@@ -11,22 +17,29 @@ class ApplicationController < ActionController::Base
   helper_method :program_mode?
   helper_method :schedule_mode?
   helper_method :program_tracks
+  helper_method :current_user
 
   before_action :set_paper_trail_whodunnit
   before_action :current_event
-  before_action :configure_permitted_parameters, if: :devise_controller?
 
   layout 'application'
   private decorates_assigned :event
 
   private
 
+  # Shim over the Rails 8 authentication stack. current_user is permanent
+  # (idiomatic).
+  def current_user
+    resume_session
+    Current.user
+  end
+
   def after_sign_in_path_for(user)
     if session[:pending_invite_accept_url]
       session[:pending_invite_accept_url]
     elsif !user.complete?
       edit_profile_path
-    elsif (referer = request.referer).present? && (URI.parse(referer).host == request.host) && (referer != new_user_session_url) && !referer.start_with?(edit_password_url(current_user)) && (referer != omniauth_authorize_url(provider: :developer))
+    elsif (referer = request.referer).present? && (URI.parse(referer).host == request.host) && (referer != new_session_url) && !referer.start_with?(edit_password_url(current_user)) && (referer != omniauth_authorize_url(provider: :developer))
       referer
     elsif session[:target]
       session.delete(:target)
@@ -45,6 +58,17 @@ class ApplicationController < ActionController::Base
 
   def current_event
     @current_event ||= set_current_event(session[:current_event_id]) if session[:current_event_id]
+  end
+
+  # Rotate the Rails session at privilege elevation (Devise did this via
+  # clean_up_csrf_token_on_authentication + session renewal), preserving the
+  # keys the post-sign-in flow legitimately needs.
+  def start_authenticated_session(user)
+    preserved = [:target, :pending_invite_accept_url, :pending_invite_email, :current_event_id]
+      .index_with { |key| session[key] }
+    reset_session
+    preserved.each { |key, value| session[key] = value unless value.nil? }
+    start_new_session_for(user)
   end
 
   def current_website
@@ -83,10 +107,6 @@ class ApplicationController < ActionController::Base
     @pundit_user ||= CurrentEventContext.new(current_user, current_event)
   end
 
-  def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:pending_invite_email])
-  end
-
   def event_staff?(event)
     if event && current_user
       event.teammates.where(user_id: current_user.id).any?
@@ -94,9 +114,9 @@ class ApplicationController < ActionController::Base
   end
 
   def require_user
-    unless user_signed_in?
+    unless authenticated?
       session[:target] = request.path
-      redirect_to new_user_session_url, flash: {danger: "You must be signed in to access this page. If you haven't created an account, please create one."}
+      redirect_to new_session_url, flash: {danger: "You must be signed in to access this page. If you haven't created an account, please create one."}
     end
   end
 

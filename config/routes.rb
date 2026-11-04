@@ -1,14 +1,25 @@
 Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
+  resource :session, only: [:new, :create, :destroy]
   resources :passwords, param: :token
+  resource :registration, only: [:new, :create]
+  resources :confirmations, param: :token, only: [:new, :create, :show]
+  # Legacy Devise-era URLs: bookmarks and emails sent before this deploy
+  # (confirmation links stay valid for 3 days). Name-less on purpose —
+  # in-app code uses the canonical session/registration/confirmations
+  # helpers. Remove after one release.
+  get 'users/sign_in', to: redirect('/session/new'), as: false
+  get 'users/sign_up', to: redirect('/registration/new'), as: false
+  get 'users/confirmation/new', to: redirect('/confirmations/new'), as: false
+  get 'users/confirmation', to: 'confirmations#show', as: false
+  delete 'users/sign_out', to: 'sessions#destroy', as: false
   # OmniAuth
   get  '/users/auth/:provider/callback', to: 'users/omniauth_callbacks#callback', as: :omniauth_callback
   post '/users/auth/:provider', to: 'users/omniauth_callbacks#passthru', as: :omniauth_authorize
   get  '/users/auth/failure', to: 'users/omniauth_callbacks#failure', as: :omniauth_failure
 
   root 'home#show'
-  devise_for :users
   mount ActionCable.server => '/cable'
 
   resource :profile, only: [:show, :edit, :update] do
@@ -135,6 +146,12 @@ Rails.application.routes.draw do
     end
 
     resources :users, only: [:index, :show, :edit, :update, :destroy]
+  end
+
+  mount MissionControl::Jobs::Engine, at: '/admin/jobs'
+
+  if Rails.env.local?
+    mount LetterOpenerWeb::Engine, at: '/letter_opener'
   end
 
   draw :website # => config/routes/website.rb

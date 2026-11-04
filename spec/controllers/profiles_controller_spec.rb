@@ -34,7 +34,7 @@ describe ProfilesController, type: :controller do
       { user: { bio: 'foo' } }
     }
 
-    before { allow(controller).to receive(:current_user).and_return(user) }
+    before { sign_in user }
 
     context 'simple case' do
       it "updates the user record" do
